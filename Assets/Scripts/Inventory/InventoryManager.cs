@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,11 +14,17 @@ public class InventoryManager : MonoBehaviour
     private Mouse mouse;
     private Camera mainCamera;
     public float reachDistance = 10f;
+    public GameObject crosshair;
+    
+    // Добавлены новые переменные
+    public GameObject itemPickupCanvas; // Канвас для подсказки подбора предмета
     
     void Start()
     {
         mainCamera = Camera.main;
         UIPanel.SetActive(false);
+        if (itemPickupCanvas != null)
+            itemPickupCanvas.SetActive(false); // Деактивируем канвас при старте
         
         for(int i = 0; i < inventoryPanel.childCount; i++)
         {
@@ -38,35 +45,52 @@ public class InventoryManager : MonoBehaviour
             if (isOpened)
             {
                 UIPanel.SetActive(false);
+                crosshair.SetActive(true);
+
             }
             else
             {
                 UIPanel.SetActive(true);
+                crosshair.SetActive(false);
             }
             isOpened = !isOpened;
         }
         
-        // Используем новую Input System вместо старой
-        if (mouse != null)
+        Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        RaycastHit hit;
+        bool isUIPanelActive = UIPanel.activeInHierarchy;
+
+        // Если UIPanel не активна и луч попал в объект
+        if(!isUIPanelActive && Physics.Raycast(ray, out hit, reachDistance))
         {
-            Ray ray = mainCamera.ScreenPointToRay(mouse.position.ReadValue());
-            RaycastHit hit;
-            Debug.Log("1");
-            if(Physics.Raycast(ray, out hit, reachDistance))
+            if(hit.collider.gameObject.GetComponent<Item>() != null)
             {
-                Debug.Log(2);
-                Debug.DrawRay(ray.origin, ray.direction * reachDistance, Color.green);
-                if(hit.collider.gameObject.GetComponent<Item>() != null)
+                // Активируем канвас при наведении на предмет
+                if (itemPickupCanvas != null)
+                    itemPickupCanvas.SetActive(true);
+                
+                // Проверяем нажатие ЛКМ для подбора предмета (исправлено на Input System)
+                if(mouse != null && mouse.leftButton.wasPressedThisFrame)
                 {
-                    Debug.Log(3);
                     AddItem(hit.collider.gameObject.GetComponent<Item>().item, hit.collider.gameObject.GetComponent<Item>().amount);
-                    Destroy(hit.collider.gameObject.GetComponent<Item>());
+                    Destroy(hit.collider.gameObject);
+                    // Деактивируем канвас после подбора
+                    if (itemPickupCanvas != null)
+                        itemPickupCanvas.SetActive(false);
                 }
             }
             else
             {
-                Debug.DrawRay(ray.origin, ray.direction * reachDistance, Color.red);
+                // Деактивируем канвас если смотрим не на предмет
+                if (itemPickupCanvas != null)
+                    itemPickupCanvas.SetActive(false);
             }
+        }
+        else
+        {
+            // Деактивируем канвас если UIPanel активна или не смотрим на предмет
+            if (itemPickupCanvas != null)
+                itemPickupCanvas.SetActive(false);
         }
     }
     
@@ -77,6 +101,7 @@ public class InventoryManager : MonoBehaviour
             if(slot.item == _item)
             {
                 slot.amount += _amount;
+                slot.itemAmountText.text = slot.amount.ToString();
                 return;
             }
         }
@@ -87,6 +112,9 @@ public class InventoryManager : MonoBehaviour
             {
                 slot.item = _item;
                 slot.amount = _amount;
+                slot.isEmpty = !slot.isEmpty;
+                slot.SetIcon(_item.icon);
+                slot.itemAmountText.text = slot.amount > 1 ? slot.amount.ToString() : "";
                 return;
             }
         }
