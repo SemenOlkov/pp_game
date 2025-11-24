@@ -12,8 +12,8 @@ public class InventorySlot : MonoBehaviour
 
     private void Start()
     {
-        itemIcon = transform.GetChild(0).gameObject;
-        itemAmountText = transform.GetChild(1).GetComponent<TMP_Text>();
+        itemIcon = transform.GetChild(0).GetChild(0).gameObject;
+        itemAmountText = transform.GetChild(0).GetChild(1).GetComponent<TMP_Text>();
     }
 
     public void SetIcon(Sprite icon)

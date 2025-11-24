@@ -11,6 +11,7 @@ public class FirstTrigger : MonoBehaviour
             // Активируем второй и третий триггеры
             triggerSystem.secondTrigger.SetActive(true);
             triggerSystem.thirdTrigger.SetActive(true);
+            triggerSystem.screamerTrigger.SetActive(true);
             
             // Деактивируем себя
             gameObject.SetActive(false);

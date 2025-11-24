@@ -10,6 +10,7 @@ public class ThirdTrigger : MonoBehaviour
         {
             // Деактивируем второй триггер и себя
             triggerSystem.secondTrigger.SetActive(false);
+            triggerSystem.screamerTrigger.SetActive(false);
             gameObject.SetActive(false);
             
             Debug.Log("Третий триггер активирован! Второй триггер и этот триггер деактивированы.");

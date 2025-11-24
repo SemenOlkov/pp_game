@@ -1,14 +1,18 @@
 using System.Collections.Generic;
+using Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class InventoryManager : MonoBehaviour
 {
-    public GameObject UIPanel;
+    public GameObject UIBG;
     public Transform inventoryPanel;
+    public Transform hotbarPanel;
     public List<InventorySlot> slots = new List<InventorySlot>();
+    public List<InventorySlot> hotbarSlots =  new List<InventorySlot>();
     public bool isOpened;
+    // public CinemachineVirtualCamera CVC;
     
     private Keyboard keyboard;
     private Mouse mouse;
@@ -20,9 +24,12 @@ public class InventoryManager : MonoBehaviour
     public GameObject itemPickupCanvas; // Канвас для подсказки подбора предмета
     
     void Start()
-    {
+    {   
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         mainCamera = Camera.main;
-        UIPanel.SetActive(false);
+        UIBG.SetActive(false);
+        inventoryPanel.gameObject.SetActive(false);
         if (itemPickupCanvas != null)
             itemPickupCanvas.SetActive(false); // Деактивируем канвас при старте
         
@@ -31,6 +38,13 @@ public class InventoryManager : MonoBehaviour
             if(inventoryPanel.GetChild(i).GetComponent<InventorySlot>() != null)
             {
                 slots.Add(inventoryPanel.GetChild(i).GetComponent<InventorySlot>());
+            }
+        }
+        for(int i = 0; i < hotbarPanel.childCount; i++)
+        {
+            if(hotbarPanel.GetChild(i).GetComponent<InventorySlot>() != null)
+            {
+                hotbarSlots.Add(hotbarPanel.GetChild(i).GetComponent<InventorySlot>());
             }
         }
         
@@ -44,24 +58,35 @@ public class InventoryManager : MonoBehaviour
         {
             if (isOpened)
             {
-                UIPanel.SetActive(false);
+                UIBG.SetActive(false);
                 crosshair.SetActive(true);
-
+                inventoryPanel.gameObject.SetActive(false);
+                // HotbarUIBG.SetActive(true);
+                // CVC.GetCinemachineComponent<CinemachinePOV>().m_VerticalAxis.m_InputAxisName = "";
+                // CVC.GetCinemachineComponent<CinemachinePOV>().m_HorizontalAxis.m_InputAxisName = "";
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
             }
             else
             {
-                UIPanel.SetActive(true);
+                UIBG.SetActive(true);
                 crosshair.SetActive(false);
+                inventoryPanel.gameObject.SetActive(true);
+                // HotbarUIBG.SetActive(false);
+                // CVC.GetCinemachineComponent<CinemachinePOV>().m_VerticalAxis.m_InputAxisName = "Mouse Y";
+                // CVC.GetCinemachineComponent<CinemachinePOV>().m_HorizontalAxis.m_InputAxisName = "Mouse X";
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
             }
             isOpened = !isOpened;
         }
         
         Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
-        bool isUIPanelActive = UIPanel.activeInHierarchy;
+        bool isUIBGActive = UIBG.activeInHierarchy;
 
-        // Если UIPanel не активна и луч попал в объект
-        if(!isUIPanelActive && Physics.Raycast(ray, out hit, reachDistance))
+        // Если UIBG не активна и луч попал в объект
+        if(!isUIBGActive && Physics.Raycast(ray, out hit, reachDistance))
         {
             if(hit.collider.gameObject.GetComponent<Item>() != null)
             {
@@ -88,7 +113,7 @@ public class InventoryManager : MonoBehaviour
         }
         else
         {
-            // Деактивируем канвас если UIPanel активна или не смотрим на предмет
+            // Деактивируем канвас если UIBG активна или не смотрим на предмет
             if (itemPickupCanvas != null)
                 itemPickupCanvas.SetActive(false);
         }
@@ -96,9 +121,32 @@ public class InventoryManager : MonoBehaviour
     
     private void AddItem(ItemScriptableObject _item, int _amount)
     {
+        foreach(InventorySlot slot in hotbarSlots)
+        {
+            if(slot.item == _item && slot.amount + _amount <= _item.maximumAmount)
+            {
+                slot.amount += _amount;
+                slot.itemAmountText.text = slot.amount.ToString();
+                return;
+            }
+        }
+        
+        foreach(InventorySlot slot in hotbarSlots)
+        {
+            if (slot.isEmpty)
+            {
+                slot.item = _item;
+                slot.amount = _amount;
+                slot.isEmpty = !slot.isEmpty;
+                slot.SetIcon(_item.icon);
+                slot.itemAmountText.text = slot.amount > 1 ? slot.amount.ToString() : "";
+                return;
+            }
+        }
+        
         foreach(InventorySlot slot in slots)
         {
-            if(slot.item == _item)
+            if(slot.item == _item && slot.amount + _amount <= _item.maximumAmount)
             {
                 slot.amount += _amount;
                 slot.itemAmountText.text = slot.amount.ToString();
@@ -119,4 +167,4 @@ public class InventoryManager : MonoBehaviour
             }
         }
     }
-}
+} 

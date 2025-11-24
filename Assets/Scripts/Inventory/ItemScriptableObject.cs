@@ -10,4 +10,9 @@ public class ItemScriptableObject : ScriptableObject
     public string itemDescription;
     public Sprite icon;
 
+    public virtual void Functionality()
+    {
+        // Базовая реализация - может быть пустой
+        Debug.Log($"Using {itemName}");
+    }
 }
