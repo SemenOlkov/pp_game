@@ -5,7 +5,6 @@ public class AntiAnomalyToolItem : ItemScriptableObject
 {
     [Header("Anti-Anomaly Tool Settings")]
     [SerializeField] private float cooldownTime = 2f;
-    private float lastUseTime = 0f;
     
     private void Awake()
     {
@@ -15,16 +14,10 @@ public class AntiAnomalyToolItem : ItemScriptableObject
     public override void Functionality()
     {
         // Проверка кулдауна
-        if (Time.time - lastUseTime < cooldownTime)
-        {
-            Debug.Log("Tool is on cooldown!");
-            return;
-        }
         
         if (AnomalyToolManager.Instance != null)
         {
             AnomalyToolManager.Instance.FixAnomaly();
-            lastUseTime = Time.time;
         }
         else
         {
@@ -32,9 +25,4 @@ public class AntiAnomalyToolItem : ItemScriptableObject
         }
     }
     
-    // Опционально: Можно добавить метод для проверки готовности инструмента
-    public bool IsReady()
-    {
-        return Time.time - lastUseTime >= cooldownTime;
-    }
 }

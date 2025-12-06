@@ -9,6 +9,7 @@ TagManager:
   - Monster
   - SceneTrigger
   - AnomalyObject
+  - Vending
   layers:
   - Default
   - TransparentFX

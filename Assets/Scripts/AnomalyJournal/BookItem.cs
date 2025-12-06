@@ -3,8 +3,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Book Item", menuName = "Inventory/Items/NewBookItem")]
 public class BookItem : ItemScriptableObject
 {
-    [TextArea(5, 10)]
-    public string bookContent;
 
     private void Start()
     {
@@ -14,9 +12,6 @@ public class BookItem : ItemScriptableObject
     public override void Functionality()
     {
         base.Functionality();
-        
-        Debug.Log($"Reading book: {itemName}");
-        Debug.Log($"Content: {bookContent}");
         
         OpenBookUI();
     }
