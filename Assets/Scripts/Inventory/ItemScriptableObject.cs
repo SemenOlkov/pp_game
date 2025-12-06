@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum ItemType {Default, Part, Tool, Artefact, Book}
+public enum ItemType {Default, Part, Tool, Artefact, Book, Flashlight, Battery, Blueprint}
 public class ItemScriptableObject : ScriptableObject
 {
     public ItemType itemType;
@@ -9,6 +9,7 @@ public class ItemScriptableObject : ScriptableObject
     public int maximumAmount;
     public string itemDescription;
     public Sprite icon;
+    public bool isConsumable = false;
 
     public virtual void Functionality()
     {

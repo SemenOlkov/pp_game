@@ -149,18 +149,18 @@ public class HotbarPanel : MonoBehaviour
         lastUseTime = Time.time;
 
         // Если предмет одноразовый (например, consumable), уменьшаем количество
-        // if (selectedSlot.item.isConsumable)
-        // {
-        //     selectedSlot.amount--;
-        //     if (selectedSlot.amount <= 0)
-        //     {
-        //         ClearSlotData(selectedSlot);
-        //     }
-        //     else
-        //     {
-        //         UpdateSlotDisplay(selectedSlot);
-        //     }
-        // }
+        if (selectedSlot.item.isConsumable)
+        {
+            selectedSlot.amount--;
+            if (selectedSlot.amount <= 0)
+            {
+                ClearSlotData(selectedSlot);
+            }
+            else
+            {
+                UpdateSlotDisplay(selectedSlot);
+            }
+        }
     }
 
     void ClearSlotData(InventorySlot slot)

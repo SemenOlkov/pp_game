@@ -3468,6 +3468,7 @@ MonoBehaviour:
   selectedColor: {r: 0.78616345, g: 0.7490802, b: 0.7490802, a: 1}
   normalColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
   player: {fileID: 0}
+  useCooldown: 0.5
 --- !u!1 &3481979815756867677
 GameObject:
   m_ObjectHideFlags: 0
@@ -7625,7 +7626,7 @@ MonoBehaviour:
   slots: []
   hotbarSlots: []
   isOpened: 0
-  reachDistance: 4
+  reachDistance: 8
   crosshair: {fileID: 8024081811822840984}
   itemPickupCanvas: {fileID: 3845318341096059210}
 --- !u!1 &6721938195406114971

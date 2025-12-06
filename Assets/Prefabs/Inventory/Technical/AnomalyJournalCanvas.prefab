@@ -149,6 +149,7 @@ GameObject:
   - component: {fileID: 8216152564914856491}
   - component: {fileID: 1721345888557378591}
   - component: {fileID: 2408389419688443668}
+  - component: {fileID: 5601589072298352069}
   m_Layer: 5
   m_Name: AnomalyJournalCanvas
   m_TagString: Untagged
@@ -258,6 +259,20 @@ MonoBehaviour:
   journalImage: {fileID: 8583093059245271911}
   previousButton: {fileID: 5692179113639915936}
   nextButton: {fileID: 3583775223147951338}
+--- !u!114 &5601589072298352069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 937018057885281097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cc04e978d1c9f14582162c35d703e48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInputManager
+  BGUI: {fileID: 996794014333610692}
+  HotbarPanel: {fileID: 0}
 --- !u!1 &996794014333610692
 GameObject:
   m_ObjectHideFlags: 0

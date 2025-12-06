@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d12a4feb032e1b646bc345c122525710, type: 3}
+  m_Name: NakopitelItem
+  m_EditorClassIdentifier: Assembly-CSharp::PartItem
+  itemType: 1
+  item3D: {fileID: 4580877746380798961, guid: 377ac061b04e48143a51313ede7f1ac5, type: 3}
+  itemName: "\u041D\u0430\u043A\u043E\u043F\u0438\u0442\u0435\u043B\u044C \u044D\u043D\u0435\u0440\u0433\u0438\u0438"
+  maximumAmount: 1
+  itemDescription: "\u0417\u0430\u043F\u0447\u0430\u0441\u0442\u044C \u043E\u0442
+    \u0443\u0441\u0442\u0440\u043E\u0439\u0441\u0442\u0432\u0430 \u0438\u0437 \u0447\u0435\u0440\u0442\u0435\u0436\u0430"
+  icon: {fileID: 21300000, guid: ff7bfa7addf40784d86f62b8e4a034a6, type: 3}
+  isConsumable: 0
