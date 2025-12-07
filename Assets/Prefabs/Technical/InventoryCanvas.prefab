@@ -7628,6 +7628,9 @@ MonoBehaviour:
   isOpened: 0
   reachDistance: 8
   crosshair: {fileID: 8024081811822840984}
+  interactionLayer:
+    serializedVersion: 2
+    m_Bits: 128
   itemPickupCanvas: {fileID: 3845318341096059210}
 --- !u!1 &6721938195406114971
 GameObject:

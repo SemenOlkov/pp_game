@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1759104764734916873}
   - component: {fileID: -4658025683012282322}
   - component: {fileID: 7080657768693057726}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PillsItem3D
   m_TagString: Untagged
   m_Icon: {fileID: 0}

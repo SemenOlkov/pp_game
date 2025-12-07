@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -5957997403195620030}
   - component: {fileID: -7179068237791870413}
   - component: {fileID: -2476555730253528795}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ReleItem3D
   m_TagString: Untagged
   m_Icon: {fileID: 0}

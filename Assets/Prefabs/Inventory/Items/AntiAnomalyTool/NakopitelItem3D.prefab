@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3574098772879908147}
   - component: {fileID: 6740458137702756296}
   - component: {fileID: -5618724472482042096}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: NakopitelItem3D
   m_TagString: Untagged
   m_Icon: {fileID: 0}

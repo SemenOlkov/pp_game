@@ -19,6 +19,7 @@ public class InventoryManager : MonoBehaviour
     private Camera mainCamera;
     public float reachDistance = 10f;
     public GameObject crosshair;
+    [SerializeField] private LayerMask interactionLayer;
     
     // Добавлены новые переменные
     public GameObject itemPickupCanvas; // Канвас для подсказки подбора предмета
@@ -86,7 +87,7 @@ public class InventoryManager : MonoBehaviour
         bool isUIBGActive = UIBG.activeInHierarchy;
 
         // Если UIBG не активна и луч попал в объект
-        if(!isUIBGActive && Physics.Raycast(ray, out hit, reachDistance))
+        if(!isUIBGActive && Physics.Raycast(ray, out hit, reachDistance, interactionLayer))
         {
             if(hit.collider.gameObject.GetComponent<Item>() != null)
             {

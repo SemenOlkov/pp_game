@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8658695199396503253}
   - component: {fileID: -3804977802519956053}
   - component: {fileID: -1612906458513292018}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: KatushkaItem3D
   m_TagString: Untagged
   m_Icon: {fileID: 0}

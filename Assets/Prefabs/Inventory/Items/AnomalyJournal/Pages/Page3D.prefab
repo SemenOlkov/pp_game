@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7962936392846091003}
   - component: {fileID: 8904109236801588910}
   - component: {fileID: -263358180403712980}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Page3D
   m_TagString: Untagged
   m_Icon: {fileID: 0}

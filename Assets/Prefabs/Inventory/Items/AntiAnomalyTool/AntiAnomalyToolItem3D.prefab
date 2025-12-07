@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -6710641788379352711}
   - component: {fileID: -542477086912982539}
   - component: {fileID: 8731095763982909438}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: AntiAnomalyToolItem3D
   m_TagString: Untagged
   m_Icon: {fileID: 0}

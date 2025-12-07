@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -789609158571916497}
   - component: {fileID: 6140967078741206349}
   - component: {fileID: 7083339537854938719}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ToolBlueprintItem3d
   m_TagString: Untagged
   m_Icon: {fileID: 0}
