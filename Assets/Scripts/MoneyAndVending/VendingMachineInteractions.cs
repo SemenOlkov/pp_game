@@ -32,6 +32,7 @@ public class VendingMachineInteraction : MonoBehaviour
     private Camera playerCamera;
     private InventoryManager inventoryManager;
     public GameObject hotbarPanel;
+    public GameObject crosshair;
     private bool isLookingAtVendingMachine = false;
     private const int MAX_CODE_LENGTH = 2;
     private bool isProcessing = false; // Флаг, чтобы избежать множественных нажатий
@@ -383,6 +384,8 @@ public class VendingMachineInteraction : MonoBehaviour
             {
                 vendingPanel.SetActive(true);
                 hotbarPanel.SetActive(false);
+                if (crosshair != null) 
+                    crosshair.SetActive(false);
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
                 
@@ -404,6 +407,8 @@ public class VendingMachineInteraction : MonoBehaviour
         {
             vendingPanel.SetActive(false);
             hotbarPanel.SetActive(true);
+            if (crosshair != null) 
+                crosshair.SetActive(true);
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             isProcessing = false;

@@ -6,7 +6,7 @@ public class BookInputManager : MonoBehaviour
     [Header("Book References")]
     public GameObject BGUI;
     public GameObject HotbarPanel;
-    
+    public GameObject crosshair;
     private Keyboard keyboard;
     private BookItem currentBookItem;
 
@@ -39,6 +39,9 @@ public class BookInputManager : MonoBehaviour
             
             if (HotbarPanel != null)
                 HotbarPanel.SetActive(false);
+
+            if (crosshair != null) 
+                crosshair.SetActive(false);       
         }
     }
 
@@ -52,6 +55,9 @@ public class BookInputManager : MonoBehaviour
             
             if (HotbarPanel != null)
                 HotbarPanel.SetActive(true);
+
+            if (crosshair != null) 
+                crosshair.SetActive(true);
         }
     }
 }

@@ -15,6 +15,7 @@ public class BlueprintInputManager : MonoBehaviour
     public GameObject craftHint;
     public GameObject notCraftHint;
     public GameObject alreadyCraftedHint;
+    public GameObject crosshair;
     public bool isCraftable = false;
     public bool isCrafted = false;
     
@@ -238,6 +239,9 @@ public class BlueprintInputManager : MonoBehaviour
             
             if (hotbarPanel != null)
                 hotbarPanel.SetActive(false);
+
+            if (crosshair != null) 
+                crosshair.SetActive(false);
             
             // Передаем страницы в менеджер пагинации
             if (pagesManager != null && blueprintItem.blueprintPages != null)
@@ -264,6 +268,9 @@ public class BlueprintInputManager : MonoBehaviour
             
             if (hotbarPanel != null)
                 hotbarPanel.SetActive(true);
+
+            if (crosshair != null) 
+                crosshair.SetActive(true);
         }
     }
 }
