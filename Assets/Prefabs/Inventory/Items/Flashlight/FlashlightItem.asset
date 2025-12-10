@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: FlashlightItem
   m_EditorClassIdentifier: Assembly-CSharp::FlashlightItem
   itemType: 5
-  item3D: {fileID: 5648697658366049342, guid: c33edc6313870964991bbb1126a18e29, type: 3}
+  item3D: {fileID: 7258218753070487603, guid: 4ae4e3c927519d24d8270d090deb13e2, type: 3}
   itemName: "\u0424\u043E\u043D\u0430\u0440\u0438\u043A"
   maximumAmount: 1
   itemDescription: "\u041E\u0431\u044B\u0447\u043D\u044B\u0439 \u0444\u043E\u043D\u0430\u0440\u0438\u043A"
   icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  isConsumable: 0
+  batteryRechargeAmount: 100
+  canRecharge: 1

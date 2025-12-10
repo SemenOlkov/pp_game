@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: KatushkaItem
   m_EditorClassIdentifier: Assembly-CSharp::PartItem
   itemType: 1
-  item3D: {fileID: 4054216725696758583, guid: 43545a8e4f5c0f24baeffc782a0002b2, type: 3}
+  item3D: {fileID: 5493646581827064326, guid: 66a33a7a12d437f4894bd1fd04068d15, type: 3}
   itemName: "\u041A\u0430\u0442\u0443\u0448\u043A\u0430 \u0430\u043D\u043E\u043C\u0430\u043B\u044C\u043D\u043E\u0439
     \u0438\u043D\u0434\u0443\u043A\u0442\u0438\u0432\u043D\u043E\u0441\u0442\u0438"
   maximumAmount: 1

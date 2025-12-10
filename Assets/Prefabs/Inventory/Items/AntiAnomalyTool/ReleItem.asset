@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ReleItem
   m_EditorClassIdentifier: Assembly-CSharp::PartItem
   itemType: 1
-  item3D: {fileID: 692803162835253941, guid: b47092bafca3244428d0aa43971fb8f3, type: 3}
+  item3D: {fileID: 1975968216780608629, guid: aceaa05f574e0eb4bb26d620ca2b76b2, type: 3}
   itemName: "\u0420\u0435\u043B\u0435"
   maximumAmount: 1
   itemDescription: "\u0417\u0430\u043F\u0447\u0430\u0441\u0442\u044C \u043E\u0442
