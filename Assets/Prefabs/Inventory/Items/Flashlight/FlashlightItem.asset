@@ -17,7 +17,7 @@ MonoBehaviour:
   itemName: "\u0424\u043E\u043D\u0430\u0440\u0438\u043A"
   maximumAmount: 1
   itemDescription: "\u041E\u0431\u044B\u0447\u043D\u044B\u0439 \u0444\u043E\u043D\u0430\u0440\u0438\u043A"
-  icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  icon: {fileID: 21300000, guid: bd87ea1fb5fbff14d91f32391ee08fb2, type: 3}
   isConsumable: 0
   batteryRechargeAmount: 100
   canRecharge: 1

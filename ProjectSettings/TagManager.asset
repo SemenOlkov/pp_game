@@ -10,6 +10,7 @@ TagManager:
   - SceneTrigger
   - AnomalyObject
   - Vending
+  - IconsCreationCamera
   layers:
   - Default
   - TransparentFX

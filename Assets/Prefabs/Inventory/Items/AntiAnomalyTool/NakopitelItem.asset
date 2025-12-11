@@ -18,5 +18,5 @@ MonoBehaviour:
   maximumAmount: 1
   itemDescription: "\u0417\u0430\u043F\u0447\u0430\u0441\u0442\u044C \u043E\u0442
     \u0443\u0441\u0442\u0440\u043E\u0439\u0441\u0442\u0432\u0430 \u0438\u0437 \u0447\u0435\u0440\u0442\u0435\u0436\u0430"
-  icon: {fileID: 21300000, guid: ff7bfa7addf40784d86f62b8e4a034a6, type: 3}
+  icon: {fileID: 21300000, guid: 9c27f26837e102b42acd1506a943087c, type: 3}
   isConsumable: 0
