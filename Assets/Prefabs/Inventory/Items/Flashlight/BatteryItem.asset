@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 055d91c20b8a0c041b28cd8310985c44, type: 3}
   m_Name: BatteryItem
   m_EditorClassIdentifier: Assembly-CSharp::BatteryItem
-  itemType: 0
+  itemType: 5
   item3D: {fileID: 6323482301375388042, guid: 691991867b8c8dc42a964971c939abe5, type: 3}
   itemName: "\u0411\u0430\u0442\u0430\u0440\u0435\u0439\u043A\u0430"
   maximumAmount: 10

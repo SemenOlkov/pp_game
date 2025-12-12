@@ -21,9 +21,13 @@ public class FlashLightManager : MonoBehaviour
     public TextMeshProUGUI messageText;
     public float messageDisplayTime = 2f;
     
+    [Header("Inventory Reference")]
+    public InventoryManager inventoryManager;
+    
     private static FlashLightManager instance;
     private Coroutine batteryDrainCoroutine;
     private bool isDraining = false;
+    private bool hasFlashlightInInventory = false;
     
     public static FlashLightManager Instance
     {
@@ -37,16 +41,6 @@ public class FlashLightManager : MonoBehaviour
         }
     }
 
-    // void Awake()
-    // {
-    //     if (instance != null && instance != this)
-    //     {
-    //         Destroy(gameObject);
-    //         return;
-    //     }
-    //     instance = this;
-    // }
-
     void Start()
     {
         if (flashlight != null)
@@ -58,13 +52,45 @@ public class FlashLightManager : MonoBehaviour
             Debug.LogWarning("Flashlight object не назначен в инспекторе!");
         }
         
+        // Ищем InventoryManager, если не присвоен в инспекторе
+        if (inventoryManager == null)
+        {
+            inventoryManager = FindObjectOfType<InventoryManager>();
+        }
+        
+        UpdateFlashlightStatus();
         UpdateBatteryUI();
     }
 
     void Update()
     {
-        // Автоматическое выключение при разрядке
-        if (flashlight != null && flashlight.activeSelf && currentBattery <= 0)
+        // Проверяем наличие фонарика в инвентаре
+        bool hadFlashlight = hasFlashlightInInventory;
+        hasFlashlightInInventory = CheckFlashlightInInventory();
+        
+        // Если фонарик только что исчез из инвентаря
+        if (hadFlashlight && !hasFlashlightInInventory)
+        {
+            // Выключаем фонарик, если он был включен
+            if (flashlight != null && flashlight.activeSelf)
+            {
+                flashlight.SetActive(false);
+                StopBatteryDrain();
+                Debug.Log("Flashlight выброшен из инвентаря, свет выключен");
+            }
+            
+            // Скрываем UI батареи
+            UpdateBatteryUI();
+        }
+        // Если фонарик только что появился в инвентаре
+        else if (!hadFlashlight && hasFlashlightInInventory)
+        {
+            // Показываем UI батареи
+            UpdateBatteryUI();
+        }
+        
+        // Автоматическое выключение при разрядке (только если фонарик есть в инвентаре)
+        if (flashlight != null && flashlight.activeSelf && currentBattery <= 0 && hasFlashlightInInventory)
         {
             TurnOffFlashlight();
             ShowMessage("Батарея разряжена. Необходимо поменять батарейки!");
@@ -75,6 +101,13 @@ public class FlashLightManager : MonoBehaviour
     public void ToggleFlashlight()
     {
         if (flashlight == null) return;
+        
+        // Проверяем, есть ли фонарик в инвентаре
+        if (!hasFlashlightInInventory)
+        {
+            ShowMessage("У вас нет фонарика в инвентаре!");
+            return;
+        }
         
         if (flashlight.activeSelf)
         {
@@ -89,6 +122,13 @@ public class FlashLightManager : MonoBehaviour
     public void TurnOnFlashlight()
     {
         if (flashlight == null) return;
+        
+        // Проверяем наличие фонарика в инвентаре
+        if (!hasFlashlightInInventory)
+        {
+            ShowMessage("У вас нет фонарика в инвентаре!");
+            return;
+        }
         
         // Проверка заряда батареи
         if (currentBattery <= 0)
@@ -113,6 +153,13 @@ public class FlashLightManager : MonoBehaviour
 
     public void SetFlashlight(bool state)
     {
+        // Проверяем наличие фонарика в инвентаре
+        if (state && !hasFlashlightInInventory)
+        {
+            ShowMessage("У вас нет фонарика в инвентаре!");
+            return;
+        }
+        
         if (state) TurnOnFlashlight();
         else TurnOffFlashlight();
     }
@@ -145,7 +192,7 @@ public class FlashLightManager : MonoBehaviour
 
     private IEnumerator DrainBattery()
     {
-        while (isDraining && currentBattery > 0)
+        while (isDraining && currentBattery > 0 && hasFlashlightInInventory)
         {
             yield return new WaitForSeconds(1f);
             
@@ -162,15 +209,61 @@ public class FlashLightManager : MonoBehaviour
         }
         
         // Если батарея разрядилась, выключаем фонарик
-        if (currentBattery <= 0)
+        if (currentBattery <= 0 && hasFlashlightInInventory)
         {
             TurnOffFlashlight();
+        }
+    }
+
+    // Метод для проверки наличия фонарика в инвентаре
+    private bool CheckFlashlightInInventory()
+    {
+        if (inventoryManager == null) return false;
+        
+        // Проверяем основные слоты инвентаря
+        foreach (InventorySlot slot in inventoryManager.slots)
+        {
+            if (slot.item != null && slot.item.itemType == ItemType.Flashlight)
+            {
+                return true;
+            }
+        }
+        
+        // Проверяем слоты горячей панели
+        foreach (InventorySlot slot in inventoryManager.hotbarSlots)
+        {
+            if (slot.item != null && slot.item.itemType == ItemType.Flashlight)
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    // Обновляем статус фонарика в зависимости от инвентаря
+    private void UpdateFlashlightStatus()
+    {
+        hasFlashlightInInventory = CheckFlashlightInInventory();
+        
+        // Если фонарика нет в инвентаре, выключаем его
+        if (!hasFlashlightInInventory && flashlight != null && flashlight.activeSelf)
+        {
+            flashlight.SetActive(false);
+            StopBatteryDrain();
         }
     }
 
     // Методы для управления батареей
     public void RechargeBattery(float amount)
     {
+        // Только если есть фонарик в инвентаре
+        if (!hasFlashlightInInventory)
+        {
+            ShowMessage("У вас нет фонарика для зарядки!");
+            return;
+        }
+        
         currentBattery = Mathf.Min(100, currentBattery + amount);
         UpdateBatteryUI();
         Debug.Log($"Батарея заряжена до {currentBattery:F1}%");
@@ -178,6 +271,13 @@ public class FlashLightManager : MonoBehaviour
 
     public void ReplaceBattery()
     {
+        // Только если есть фонарик в инвентаре
+        if (!hasFlashlightInInventory)
+        {
+            ShowMessage("У вас нет фонарика для замены батареи!");
+            return;
+        }
+        
         currentBattery = 100f;
         UpdateBatteryUI();
         Debug.Log("Батарея заменена");
@@ -185,6 +285,9 @@ public class FlashLightManager : MonoBehaviour
 
     public void SetBattery(float value)
     {
+        // Только если есть фонарик в инвентаре
+        if (!hasFlashlightInInventory) return;
+        
         currentBattery = Mathf.Clamp(value, 0, 100);
         UpdateBatteryUI();
     }
@@ -199,20 +302,31 @@ public class FlashLightManager : MonoBehaviour
         return currentBattery > 0;
     }
 
+    public bool HasFlashlightInInventory()
+    {
+        return hasFlashlightInInventory;
+    }
+
     // UI методы
     private void UpdateBatteryUI()
     {
         if (batteryText != null)
         {
-            batteryText.text = $"{currentBattery:F0}%";
+            // Показываем текст только если есть фонарик в инвентаре
+            batteryText.gameObject.SetActive(hasFlashlightInInventory);
             
-            // Изменение цвета в зависимости от уровня заряда
-            if (currentBattery <= 10)
-                batteryText.color = criticalBatteryColor;
-            else if (currentBattery <= lowBatteryThreshold)
-                batteryText.color = lowBatteryColor;
-            else
-                batteryText.color = normalBatteryColor;
+            if (hasFlashlightInInventory)
+            {
+                batteryText.text = $"{currentBattery:F0}%";
+                
+                // Изменение цвета в зависимости от уровня заряда
+                if (currentBattery <= 10)
+                    batteryText.color = criticalBatteryColor;
+                else if (currentBattery <= lowBatteryThreshold)
+                    batteryText.color = lowBatteryColor;
+                else
+                    batteryText.color = normalBatteryColor;
+            }
         }
     }
 
@@ -241,6 +355,13 @@ public class FlashLightManager : MonoBehaviour
         }
     }
 
+    // Метод для принудительной проверки инвентаря (можно вызывать при изменении инвентаря)
+    public void CheckInventoryForFlashlight()
+    {
+        UpdateFlashlightStatus();
+        UpdateBatteryUI();
+    }
+
     // Для дебага в инспекторе
     [ContextMenu("Заменить батарею")]
     private void DebugReplaceBattery()
@@ -252,5 +373,11 @@ public class FlashLightManager : MonoBehaviour
     private void DebugDrain50()
     {
         SetBattery(currentBattery - 50);
+    }
+
+    [ContextMenu("Проверить наличие фонарика")]
+    private void DebugCheckFlashlight()
+    {
+        Debug.Log($"Фонарик в инвентаре: {CheckFlashlightInInventory()}");
     }
 }

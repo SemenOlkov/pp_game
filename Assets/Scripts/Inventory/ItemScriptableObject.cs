@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum ItemType {Default, Part, Tool, Book, Flashlight, Battery, Blueprint, Page, Pills, Money}
+public enum ItemType {Default, Part, Tool, Book, Flashlight, Battery, Blueprint, Page, Pills, Money, Crowbar, Key}
 public class ItemScriptableObject : ScriptableObject
 {
     public ItemType itemType;
