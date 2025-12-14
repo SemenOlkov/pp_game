@@ -14,9 +14,13 @@ public class LockerDoorController : MonoBehaviour
     [SerializeField] private bool requiresKey = false; // Требуется ли ключ для открытия
     [SerializeField] private string requiredKeyCode = "333"; // Код требуемого ключа
 
+    [Header("Trap settings")]
+    [SerializeField] private bool isTrap = true;
+    [SerializeField] private GameObject screamerTrigger;
+
     [Header("Raycast Settings")]
     [SerializeField] private LayerMask lockerLayer; // Слой шкафчиков
-    [SerializeField] private float interactionDistance = 3f; // Дистанция взаимодействия
+    [SerializeField] private float interactionDistance = 8f; // Дистанция взаимодействия
 
     [Header("UI Settings")]
     [SerializeField] private GameObject openHintText; // Текст подсказки для открытия
@@ -196,6 +200,10 @@ public class LockerDoorController : MonoBehaviour
         doorTransform.localRotation = targetRotation;
         isOpen = open;
         isAnimating = false;
+        if (isTrap)
+        {
+            screamerTrigger.SetActive(true);
+        }
         
         // Обновляем подсказку после анимации
         if (isHovered)

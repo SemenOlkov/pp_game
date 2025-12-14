@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public class ScreamerTrigger : MonoBehaviour
 {
     [SerializeField] private float raycastDistance = 10f;
+    [SerializeField] private LayerMask interactionLayer;
     
     private Camera playerCamera;
     
@@ -22,6 +23,15 @@ public class ScreamerTrigger : MonoBehaviour
         }
     }
     
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            SceneManager.LoadScene("Dead");
+            enabled = false;
+        }
+    }
+
     private void Update()
     {
         if (playerCamera == null) return;
@@ -29,7 +39,7 @@ public class ScreamerTrigger : MonoBehaviour
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
         RaycastHit hit;
         
-        if (Physics.Raycast(ray, out hit, raycastDistance))
+        if (Physics.Raycast(ray, out hit, raycastDistance, interactionLayer))
         {
             if (hit.collider.gameObject == gameObject)
             {

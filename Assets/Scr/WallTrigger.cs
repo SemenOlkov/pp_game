@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class WallTrigger : MonoBehaviour
 {
-    public GameObject screamerUI; // Панель со скримером
-    public Animator screamerAnimator; // Аниматор монстра
+    public GameObject screamerUI; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    public Animator screamerAnimator; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
     private bool isScreaming = false;
 
@@ -17,20 +17,20 @@ public class WallTrigger : MonoBehaviour
 
     public void StartScream()
     {
-        if (isScreaming) return; // Уже идет
+        if (isScreaming) return; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         isScreaming = true;
 
-        // Включаем UI скримера
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ UI пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         screamerUI.SetActive(true);
 
-        // Запускаем анимацию
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         screamerAnimator.SetTrigger("StartScream");
     }
 
-    // Можно добавить метод для отключения, который вызывается по событию в анимации
+    // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     public void StopScream()
     {
-        // Отключаем UI
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ UI
         screamerUI.SetActive(false);
         isScreaming = false;
     }

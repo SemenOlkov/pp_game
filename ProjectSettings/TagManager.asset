@@ -10,7 +10,7 @@ TagManager:
   - SceneTrigger
   - AnomalyObject
   - Vending
-  - IconsCreationCamera
+  - New tag
   layers:
   - Default
   - TransparentFX
@@ -21,7 +21,7 @@ TagManager:
   - Vending
   - InventoryItem
   - Locker
-  - 
+  - DoorDef
   - 
   - 
   - 

@@ -7,6 +7,7 @@ public class TriggerSystem : MonoBehaviour
     public GameObject secondTrigger;
     public GameObject thirdTrigger;
     public GameObject screamerTrigger;
+    public GameObject maneken;
 
     [Header("Teleport Position")]
     public Vector3 firstTriggerPosition { get; private set; }
@@ -21,6 +22,7 @@ public class TriggerSystem : MonoBehaviour
         secondTrigger.SetActive(false);
         thirdTrigger.SetActive(false);
         screamerTrigger.SetActive(false);
+        maneken.SetActive(false);
 
         Debug.Log("Позиция первого триггера сохранена: " + firstTriggerPosition);
     }

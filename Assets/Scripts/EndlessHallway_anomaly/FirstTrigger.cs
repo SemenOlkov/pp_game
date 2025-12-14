@@ -12,6 +12,7 @@ public class FirstTrigger : MonoBehaviour
             triggerSystem.secondTrigger.SetActive(true);
             triggerSystem.thirdTrigger.SetActive(true);
             triggerSystem.screamerTrigger.SetActive(true);
+            triggerSystem.maneken.SetActive(true);
             
             // Деактивируем себя
             gameObject.SetActive(false);
