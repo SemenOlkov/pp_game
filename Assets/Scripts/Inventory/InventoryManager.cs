@@ -3,6 +3,7 @@ using Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -10,9 +11,8 @@ public class InventoryManager : MonoBehaviour
     public Transform inventoryPanel;
     public Transform hotbarPanel;
     public List<InventorySlot> slots = new List<InventorySlot>();
-    public List<InventorySlot> hotbarSlots =  new List<InventorySlot>();
+    public List<InventorySlot> hotbarSlots = new List<InventorySlot>();
     public bool isOpened;
-    // public CinemachineVirtualCamera CVC;
     
     private Keyboard keyboard;
     private Mouse mouse;
@@ -22,17 +22,57 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private LayerMask interactionLayer;
     
     // Добавлены новые переменные
-    public GameObject itemPickupCanvas; // Канвас для подсказки подбора предмета
+    public GameObject itemPickupCanvas;
+    
+    // Синглтон паттерн
+    public static InventoryManager Instance { get; private set; }
+    
+    // Флаг для проверки необходимости поиска камеры
+    private bool cameraNeedsUpdate = false;
+    
+    private void Awake()
+    {
+        // Реализация синглтона
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        
+        Instance = this;
+        DontDestroyOnLoad(this.gameObject);
+        
+        // Подписываемся на событие загрузки сцены
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    
+    private void OnDestroy()
+    {
+        // Отписываемся от события при уничтожении
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // При загрузке новой сцены помечаем, что нужно обновить камеру
+        cameraNeedsUpdate = true;
+        
+        // Также обновляем ссылку на игрока для DragAndDropItem
+        UpdatePlayerReference();
+    }
     
     void Start()
     {   
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        mainCamera = Camera.main;
+        
+        // Находим камеру при старте
+        FindMainCamera();
+        
         UIBG.SetActive(false);
         inventoryPanel.gameObject.SetActive(false);
         if (itemPickupCanvas != null)
-            itemPickupCanvas.SetActive(false); // Деактивируем канвас при старте
+            itemPickupCanvas.SetActive(false);
         
         for(int i = 0; i < inventoryPanel.childCount; i++)
         {
@@ -52,76 +92,152 @@ public class InventoryManager : MonoBehaviour
         keyboard = Keyboard.current;
         mouse = Mouse.current;
     }
-
+    
     void Update() 
     {
+        // Проверяем, нужно ли обновить камеру
+        if (cameraNeedsUpdate || mainCamera == null)
+        {
+            FindMainCamera();
+            cameraNeedsUpdate = false;
+        }
+        
         if (keyboard != null && keyboard.eKey.wasPressedThisFrame)
         {
             if (isOpened)
             {
-                UIBG.SetActive(false);
-                crosshair.SetActive(true);
-                inventoryPanel.gameObject.SetActive(false);
-                // HotbarUIBG.SetActive(true);
-                // CVC.GetCinemachineComponent<CinemachinePOV>().m_VerticalAxis.m_InputAxisName = "";
-                // CVC.GetCinemachineComponent<CinemachinePOV>().m_HorizontalAxis.m_InputAxisName = "";
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
+                CloseInventory();
             }
             else
             {
-                UIBG.SetActive(true);
-                crosshair.SetActive(false);
-                inventoryPanel.gameObject.SetActive(true);
-                // HotbarUIBG.SetActive(false);
-                // CVC.GetCinemachineComponent<CinemachinePOV>().m_VerticalAxis.m_InputAxisName = "Mouse Y";
-                // CVC.GetCinemachineComponent<CinemachinePOV>().m_HorizontalAxis.m_InputAxisName = "Mouse X";
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
+                OpenInventory();
             }
             isOpened = !isOpened;
         }
         
+        // Если камера всё ещё null, выходим из метода
+        if (mainCamera == null)
+        {
+            Debug.LogWarning("Camera not found! Raycast functionality disabled.");
+            return;
+        }
+        
+        // Остальной код Update...
         Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
         bool isUIBGActive = UIBG.activeInHierarchy;
 
-        // Если UIBG не активна и луч попал в объект
         if(!isUIBGActive && Physics.Raycast(ray, out hit, reachDistance, interactionLayer))
         {
             if(hit.collider.gameObject.GetComponent<Item>() != null)
             {
-                // Активируем канвас при наведении на предмет
                 if (itemPickupCanvas != null)
                     itemPickupCanvas.SetActive(true);
                 
-                // Проверяем нажатие ЛКМ для подбора предмета (исправлено на Input System)
                 if(mouse != null && mouse.leftButton.wasPressedThisFrame)
                 {
                     AddItem(hit.collider.gameObject.GetComponent<Item>().item, hit.collider.gameObject.GetComponent<Item>().amount);
                     Destroy(hit.collider.gameObject);
-                    // Деактивируем канвас после подбора
                     if (itemPickupCanvas != null)
                         itemPickupCanvas.SetActive(false);
                 }
             }
             else
             {
-                // Деактивируем канвас если смотрим не на предмет
                 if (itemPickupCanvas != null)
                     itemPickupCanvas.SetActive(false);
             }
         }
         else
         {
-            // Деактивируем канвас если UIBG активна или не смотрим на предмет
             if (itemPickupCanvas != null)
                 itemPickupCanvas.SetActive(false);
         }
     }
     
+    // Метод для поиска главной камеры
+    private void FindMainCamera()
+    {
+        mainCamera = Camera.main;
+        
+        if (mainCamera == null)
+        {
+            // Ищем камеру вручную, если Camera.main не находит
+            Camera[] cameras = FindObjectsOfType<Camera>();
+            foreach (Camera cam in cameras)
+            {
+                if (cam.gameObject.tag == "MainCamera" || cam.gameObject.name.Contains("Main Camera"))
+                {
+                    mainCamera = cam;
+                    Debug.Log("Found camera manually: " + mainCamera.name);
+                    break;
+                }
+            }
+            
+            if (mainCamera == null && cameras.Length > 0)
+            {
+                // Берём первую активную камеру
+                foreach (Camera cam in cameras)
+                {
+                    if (cam.isActiveAndEnabled)
+                    {
+                        mainCamera = cam;
+                        Debug.Log("Using first active camera: " + mainCamera.name);
+                        break;
+                    }
+                }
+            }
+        }
+        
+        if (mainCamera != null)
+        {
+            Debug.Log("Camera found: " + mainCamera.name);
+        }
+        else
+        {
+            Debug.LogError("No camera found in the scene!");
+        }
+    }
+    
+    // Метод для обновления ссылки на игрока
+    private void UpdatePlayerReference()
+    {
+        // Находим все объекты DragAndDropItem и обновляем ссылку на игрока
+        DragAndDropItem[] dragItems = FindObjectsOfType<DragAndDropItem>();
+        foreach (DragAndDropItem dragItem in dragItems)
+        {
+            dragItem.UpdatePlayerReference();
+        }
+    }
+    
+    // Методы для открытия/закрытия инвентаря
+    private void OpenInventory()
+    {
+        UIBG.SetActive(true);
+        crosshair.SetActive(false);
+        inventoryPanel.gameObject.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+    
+    private void CloseInventory()
+    {
+        UIBG.SetActive(false);
+        crosshair.SetActive(true);
+        inventoryPanel.gameObject.SetActive(false);
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+    
+    // Публичный метод для принудительного обновления камеры из других скриптов
+    public void RefreshCamera()
+    {
+        cameraNeedsUpdate = true;
+    }
+    
     private void AddItem(ItemScriptableObject _item, int _amount)
     {
+        // ... существующий код AddItem ...
         foreach(InventorySlot slot in hotbarSlots)
         {
             if(slot.item == _item && slot.amount + _amount <= _item.maximumAmount)
@@ -168,4 +284,4 @@ public class InventoryManager : MonoBehaviour
             }
         }
     }
-} 
+}

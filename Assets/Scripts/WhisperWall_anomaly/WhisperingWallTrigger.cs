@@ -13,6 +13,21 @@ public class WhisperingWallTrigger : MonoBehaviour
     private bool isPlayerInTrigger = false;
     private Coroutine damageCoroutine;
 
+    private void Start()
+    {    
+        // Ищем компонент PlayerStatus в сцене
+        playerStatus = FindObjectOfType<PlayerStatus>();
+    
+        if (playerStatus == null)
+        {
+            Debug.LogWarning("PlayerStatus not found in scene! Will try to get it when player enters trigger.");
+        }
+        else
+        {
+            Debug.Log("PlayerStatus found and assigned in Start");
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))

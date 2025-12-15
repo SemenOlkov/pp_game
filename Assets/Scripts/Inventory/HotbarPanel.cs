@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class HotbarPanel : MonoBehaviour
 {
@@ -15,10 +16,28 @@ public class HotbarPanel : MonoBehaviour
     public float useCooldown = 0.5f; // Задержка между использованиями
     private float lastUseTime = 0f;
 
+    private void Awake()
+    {
+        // Подписываемся на событие загрузки сцены
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDestroy()
+    {
+        // Отписываемся от события при уничтожении
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Обновляем ссылку на игрока при загрузке новой сцены
+        FindPlayerReference();
+    }
+
     private void Start()
     {
         // Находим игрока по тегу
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        FindPlayerReference();
         InitializeSlots();
         UpdateSelection();
     }
@@ -38,6 +57,22 @@ public class HotbarPanel : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
             UseSelectedItem();
+        }
+    }
+
+    /// <summary>
+    /// Поиск и обновление ссылки на игрока
+    /// </summary>
+    private void FindPlayerReference()
+    {
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            player = playerObj.transform;
+        }
+        else
+        {
+            Debug.LogWarning("Player not found! Make sure there's an object with tag 'Player' in the scene.");
         }
     }
 
@@ -109,12 +144,33 @@ public class HotbarPanel : MonoBehaviour
         if (selectedSlot.isEmpty)
             return;
 
+        // Проверяем ссылку на игрока
+        if (player == null)
+        {
+            Debug.LogWarning("Player reference is null! Attempting to find player...");
+            FindPlayerReference();
+            
+            if (player == null)
+            {
+                Debug.LogError("Cannot drop item: Player reference is null!");
+                return;
+            }
+        }
+
         // Выброс предмета из инвентаря - спавним префаб объекта перед персонажем
         Vector3 spawnPosition = player.position + Vector3.up + player.forward * 1.5f;
 
         // Для отладки
         Debug.Log("Player position: " + player.position);
         Debug.Log("Spawn position: " + spawnPosition);
+
+        // Проверяем наличие 3D модели предмета
+        if (selectedSlot.item == null || selectedSlot.item.item3D == null)
+        {
+            Debug.LogWarning("Cannot drop item: Item or its 3D model is null!");
+            ClearSlotData(selectedSlot);
+            return;
+        }
 
         // Создаем предмет в мире
         GameObject itemObject = Instantiate(selectedSlot.item.item3D, spawnPosition, Quaternion.identity);
@@ -123,6 +179,13 @@ public class HotbarPanel : MonoBehaviour
         Item worldItem = itemObject.GetComponent<Item>();
         if (worldItem != null)
         {
+            worldItem.amount = selectedSlot.amount;
+        }
+        else
+        {
+            // Если у объекта нет компонента Item, добавляем его
+            worldItem = itemObject.AddComponent<Item>();
+            worldItem.item = selectedSlot.item;
             worldItem.amount = selectedSlot.amount;
         }
 
@@ -169,9 +232,18 @@ public class HotbarPanel : MonoBehaviour
         slot.item = null;
         slot.amount = 0;
         slot.isEmpty = true;
-        slot.itemIcon.GetComponent<Image>().color = new Color(1, 1, 1, 0);
-        slot.itemIcon.GetComponent<Image>().sprite = null;
-        slot.itemAmountText.text = "";
+        
+        Image iconImage = slot.itemIcon.GetComponent<Image>();
+        if (iconImage != null)
+        {
+            iconImage.color = new Color(1, 1, 1, 0);
+            iconImage.sprite = null;
+        }
+        
+        if (slot.itemAmountText != null)
+        {
+            slot.itemAmountText.text = "";
+        }
     }
 
     void UpdateSlotDisplay(InventorySlot slot)

@@ -137,6 +137,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7241973162977180111}
   - component: {fileID: 760413494271455309}
+  - component: {fileID: 2176511747302098544}
   m_Layer: 0
   m_Name: FPV_Player_Flashlight
   m_TagString: Player
@@ -174,7 +175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9432c3e9ea242d4c846e48acd8f7091, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlashLightManager
-  flashlight: {fileID: 0}
+  flashlight: {fileID: 2406190868904244848}
   batteryText: {fileID: 0}
   currentBattery: 100
   batteryDrainRate: 1
@@ -185,6 +186,20 @@ MonoBehaviour:
   messageText: {fileID: 0}
   messageDisplayTime: 2
   inventoryManager: {fileID: 0}
+--- !u!114 &2176511747302098544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6886533174919145533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f3f703f8e6af4c47ac8f0e38dbe42ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnomalyToolManager
+  playerCamera: {fileID: 0}
+  raycastDistance: 10
 --- !u!1001 &6039250190519514024
 PrefabInstance:
   m_ObjectHideFlags: 0

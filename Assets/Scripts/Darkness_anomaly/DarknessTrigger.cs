@@ -17,15 +17,26 @@ public class DarknessTrigger : MonoBehaviour
 
     private void Start()
     {
-        // Получаем ссылку на FlashLightManager
+    // Получаем ссылку на FlashLightManager
         flashlightManager = FlashLightManager.Instance;
-        
+    
         if (flashlightManager == null)
         {
             Debug.LogWarning("FlashLightManager not found in scene!");
         }
+    
+        // Ищем компонент PlayerStatus в сцене
+        playerStatus = FindObjectOfType<PlayerStatus>();
+    
+        if (playerStatus == null)
+        {
+            Debug.LogWarning("PlayerStatus not found in scene! Will try to get it when player enters trigger.");
+        }
+        else
+        {
+            Debug.Log("PlayerStatus found and assigned in Start");
+        }
     }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))

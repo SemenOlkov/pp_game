@@ -5,28 +5,41 @@ public class ScreamerTrigger : MonoBehaviour
 {
     [SerializeField] private float raycastDistance = 10f;
     [SerializeField] private LayerMask interactionLayer;
+    [SerializeField] private GameObject SingletonUI;
     
     private Camera playerCamera;
     
-    private void Start()
+  private void Start()
+{
+    // Ищем камеру на игроке
+    GameObject player = GameObject.FindGameObjectWithTag("Player");
+    if (player != null)
     {
-        // Ищем камеру на игроке
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
-        {
-            playerCamera = player.GetComponentInChildren<Camera>();
-        }
-        
-        if (playerCamera == null)
-        {
-            playerCamera = Camera.main;
-        }
+        playerCamera = player.GetComponentInChildren<Camera>();
     }
+    
+    if (playerCamera == null)
+    {
+        playerCamera = Camera.main;
+    }
+    
+    // Ищем объект с компонентом PersistentObject
+    PersistentObject persistentObject = FindObjectOfType<PersistentObject>();
+    if (persistentObject != null)
+    {
+        SingletonUI = persistentObject.gameObject;
+    }
+    else
+    {
+        Debug.LogWarning("Не найден объект с компонентом PersistentObject");
+    }
+}
     
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
+            SingletonUI.SetActive(false);
             SceneManager.LoadScene("Dead");
             enabled = false;
         }
@@ -43,6 +56,7 @@ public class ScreamerTrigger : MonoBehaviour
         {
             if (hit.collider.gameObject == gameObject)
             {
+                SingletonUI.SetActive(false);
                 SceneManager.LoadScene("Dead");
                 enabled = false; // Отключаем скрипт после срабатывания
             }

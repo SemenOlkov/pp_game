@@ -32,7 +32,6 @@ public class VendingMachineInteraction : MonoBehaviour
     private Camera playerCamera;
     private InventoryManager inventoryManager;
     public GameObject hotbarPanel;
-    public GameObject crosshair;
     private bool isLookingAtVendingMachine = false;
     private const int MAX_CODE_LENGTH = 2;
     private bool isProcessing = false; // Флаг, чтобы избежать множественных нажатий
@@ -45,9 +44,18 @@ public class VendingMachineInteraction : MonoBehaviour
         inventoryManager = FindObjectOfType<InventoryManager>();
         if (inventoryManager == null)
         {
-            Debug.LogError("InventoryManager not found in scene!");
+            Debug.LogWarning("InventoryManager not found in scene!");
         }
-        
+
+        HotbarPanel hotbarPanel_comp = FindObjectOfType<HotbarPanel>();
+        if (hotbarPanel_comp != null)
+        {
+            hotbarPanel = hotbarPanel_comp.gameObject;
+        }
+        else
+        {
+            Debug.LogWarning("HotbarPanel not found in scene!");
+        }
         // Настраиваем Input Action
         rightMouseClick.Enable();
         rightMouseClick.performed += OnRightMouseClick;
@@ -382,12 +390,10 @@ public class VendingMachineInteraction : MonoBehaviour
         {
             if (vendingPanel != null)
             {
-                vendingPanel.SetActive(true);
-                hotbarPanel.SetActive(false);
-                if (crosshair != null) 
-                    crosshair.SetActive(false);
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+                vendingPanel.SetActive(true);
+                hotbarPanel.SetActive(false);
                 
                 CancelInput();
                 HideAllText();
@@ -407,8 +413,6 @@ public class VendingMachineInteraction : MonoBehaviour
         {
             vendingPanel.SetActive(false);
             hotbarPanel.SetActive(true);
-            if (crosshair != null) 
-                crosshair.SetActive(true);
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             isProcessing = false;
