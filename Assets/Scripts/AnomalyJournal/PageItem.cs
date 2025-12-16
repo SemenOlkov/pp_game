@@ -23,20 +23,16 @@ public class PageItem : ItemScriptableObject
             // Check if the sprite is not null
             if (pageSprite != null)
             {
-                // Check if this sprite is not already in the journal
+            if (!journalManager.collectedPages.Contains(pageSprite))
+            {
+                journalManager.collectedPages.Add(pageSprite);
+                // Также добавляем в основной список для отображения
                 if (!journalManager.pageSprites.Contains(pageSprite))
                 {
-                    // Add the sprite to the journal
                     journalManager.pageSprites.Add(pageSprite);
-                    
-                    // Optional: Update the journal display if it's currently open
-                    // journalManager.UpdateButtons();
-                    
-                    Debug.Log($"Page added to journal: {itemName}");
-                    
-                    // Optional: Show a notification or UI feedback
-                    ShowPageAddedNotification();
                 }
+                Debug.Log($"Page added to collectedPages: {itemName}");
+}
                 else
                 {
                     Debug.Log($"This page is already in the journal: {itemName}");
@@ -51,15 +47,6 @@ public class PageItem : ItemScriptableObject
         {
             Debug.LogError("JournalPagesManager not found in the scene!");
         }
-    }
-
-    private void ShowPageAddedNotification()
-    {
-        // You can implement UI feedback here
-        // For example, show a message or play a sound
-        Debug.Log($"New journal page discovered: {itemName}");
         
-        // Optional: Trigger an event for UI updates
-        // EventSystem.Instance?.TriggerEvent("JournalUpdated");
     }
 }

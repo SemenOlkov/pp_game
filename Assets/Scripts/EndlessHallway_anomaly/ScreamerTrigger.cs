@@ -35,13 +35,21 @@ public class ScreamerTrigger : MonoBehaviour
     }
 }
     
+    private void ExecuteDeath()
+    {
+        if (PersistentObject.Instance != null)
+            Destroy(PersistentObject.Instance.gameObject);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;    
+        SceneManager.LoadScene("Dead");
+    }
+
+    // Используйте этот метод в OnTriggerEnter и Update:
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            SingletonUI.SetActive(false);
-            SceneManager.LoadScene("Dead");
-            enabled = false;
+            ExecuteDeath();
         }
     }
 
@@ -56,9 +64,7 @@ public class ScreamerTrigger : MonoBehaviour
         {
             if (hit.collider.gameObject == gameObject)
             {
-                SingletonUI.SetActive(false);
-                SceneManager.LoadScene("Dead");
-                enabled = false; // Отключаем скрипт после срабатывания
+                ExecuteDeath(); // Отключаем скрипт после срабатывания
             }
         }
     }

@@ -33,14 +33,14 @@ public class InventoryManager : MonoBehaviour
     private void Awake()
     {
         // Реализация синглтона
-        if (Instance != null && Instance != this)
-        {
-            Destroy(this.gameObject);
-            return;
-        }
+        // if (Instance != null && Instance != this)
+        // {
+        //     Destroy(this.gameObject);
+        //     return;
+        // }
         
-        Instance = this;
-        DontDestroyOnLoad(this.gameObject);
+        // Instance = this;
+        // DontDestroyOnLoad(this.gameObject);
         
         // Подписываемся на событие загрузки сцены
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -234,7 +234,10 @@ public class InventoryManager : MonoBehaviour
     {
         cameraNeedsUpdate = true;
     }
-    
+    public void UpdateCameraReference() 
+    {
+        mainCamera = Camera.main;
+    }
     private void AddItem(ItemScriptableObject _item, int _amount)
     {
         // ... существующий код AddItem ...

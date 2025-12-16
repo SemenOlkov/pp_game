@@ -136,6 +136,15 @@ public class HotbarPanel : MonoBehaviour
         }
     }
 
+    // Добавьте этот метод внутрь класса HotbarPanel
+    public void UpdatePlayerReference()
+    {
+        // У вас уже есть логика поиска в методе FindPlayerReference()
+        // Просто вызываем её повторно
+        FindPlayerReference();
+        Debug.Log("Hotbar: Ссылка на игрока обновлена.");
+    }
+
     void DropSelectedItem()
     {
         InventorySlot selectedSlot = GetSelectedSlot();

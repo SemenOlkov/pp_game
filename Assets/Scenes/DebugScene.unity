@@ -2713,7 +2713,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorDefault
   canGo: 1
-  sceneName: Scene_1_after
+  sceneName: Scene_1
   goText: {fileID: 382133516}
   cantGoText: {fileID: 382133515}
   interactionDistance: 7
