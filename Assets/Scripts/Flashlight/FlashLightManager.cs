@@ -67,6 +67,10 @@ public class FlashLightManager : MonoBehaviour
         // Проверяем наличие фонарика в инвентаре
         bool hadFlashlight = hasFlashlightInInventory;
         hasFlashlightInInventory = CheckFlashlightInInventory();
+        if (flashlight != null && flashlight.activeSelf && !isDraining && hasFlashlightInInventory)
+        {
+            flashlight.SetActive(false);
+        }
         
         // Если фонарик только что исчез из инвентаря
         if (hadFlashlight && !hasFlashlightInInventory)
@@ -95,6 +99,34 @@ public class FlashLightManager : MonoBehaviour
             TurnOffFlashlight();
             ShowMessage("Батарея разряжена. Необходимо поменять батарейки!");
         }
+    }
+
+    public void RefreshFlashlightReference()
+    {
+        // Ищем объект с компонентом flashpass (ваша метка на фонарике)
+        // Предполагаем, что flashpass висит на самом объекте света или его родителе
+        FlashPass marker = FindObjectOfType<FlashPass>();
+    
+        if (marker != null)
+        {
+            flashlight = marker.gameObject;
+            Debug.Log("[FlashLightManager] Ссылка на фонарик обновлена.");
+        }
+        else
+        {
+            Debug.LogWarning("[FlashLightManager] Объект с компонентом flashpass не найден!");
+        }
+
+        // Также обновляем ссылку на инвентарь, так как UI пересоздался
+        inventoryManager = InventoryManager.Instance;
+    }
+    public void RegisterFlashlight(GameObject flashlightObject)
+    {
+        flashlight = flashlightObject;
+        Debug.Log("[FlashLightManager] Фонарик успешно зарегистрирован через flashpass!");
+    
+        // Сразу проверяем инвентарь, чтобы включить/выключить UI батареи
+        CheckInventoryForFlashlight();
     }
 
     // Публичные методы для управления фонариком из других скриптов

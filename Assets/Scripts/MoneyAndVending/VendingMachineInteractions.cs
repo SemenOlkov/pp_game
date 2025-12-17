@@ -14,13 +14,13 @@ public class VendingMachineInteraction : MonoBehaviour
     [SerializeField] private TMP_InputField codeInputField;
     
     [Header("Vending Settings")]
-    [SerializeField] private ItemScriptableObject vendingItem; // Предмет, который выдается за код 42
+    [SerializeField] private ItemScriptableObject vendingItem; 
     [SerializeField] private string correctCode = "42";
     
     [Header("Number Buttons")]
-    [SerializeField] private Button[] numberButtons = new Button[10]; // 0-9
-    [SerializeField] private Button cancelButton; // Стирает введенный текст
-    [SerializeField] private Button closeButton; // Закрывает всю панель
+    [SerializeField] private Button[] numberButtons = new Button[10]; 
+    [SerializeField] private Button cancelButton; 
+    [SerializeField] private Button closeButton; 
     
     [Header("Raycast Settings")]
     [SerializeField] private float interactionRange = 5f;
@@ -29,44 +29,40 @@ public class VendingMachineInteraction : MonoBehaviour
     [Header("Input Settings")]
     [SerializeField] private InputAction rightMouseClick;
     
-    private Camera playerCamera;
-    private InventoryManager inventoryManager;
-    public GameObject hotbarPanel;
     private bool isLookingAtVendingMachine = false;
     private const int MAX_CODE_LENGTH = 2;
-    private bool isProcessing = false; // Флаг, чтобы избежать множественных нажатий
-    
+    private bool isProcessing = false; 
+
+    // --- ДИНАМИЧЕСКИЕ СВОЙСТВА ВМЕСТО КЭШИРОВАНИЯ В START ---
+
+    private InventoryManager CurrentInventory => InventoryManager.Instance;
+
+    private GameObject CurrentHotbar
+    {
+        get
+        {
+            // Находим компонент HotbarPanel внутри живого синглтона UI
+            if (PersistentObject.Instance != null)
+            {
+                var hp = PersistentObject.Instance.GetComponentInChildren<HotbarPanel>(true);
+                return hp != null ? hp.gameObject : null;
+            }
+            return null;
+        }
+    }
+
+    private Camera PlayerCamera => Camera.main;
+
+    // -------------------------------------------------------
+
     private void Start()
     {
-        playerCamera = Camera.main;
-        
-        // Находим InventoryManager и HotbarPanel
-        inventoryManager = FindObjectOfType<InventoryManager>();
-        if (inventoryManager == null)
-        {
-            Debug.LogWarning("InventoryManager not found in scene!");
-        }
-
-        HotbarPanel hotbarPanel_comp = FindObjectOfType<HotbarPanel>();
-        if (hotbarPanel_comp != null)
-        {
-            hotbarPanel = hotbarPanel_comp.gameObject;
-        }
-        else
-        {
-            Debug.LogWarning("HotbarPanel not found in scene!");
-        }
-        // Настраиваем Input Action
         rightMouseClick.Enable();
         rightMouseClick.performed += OnRightMouseClick;
         
-        // Инициализируем кнопки
         InitializeButtons();
-        
-        // Настраиваем поле ввода
         SetupInputField();
         
-        // Скрываем все UI элементы при старте
         if (hasMoneyText != null) hasMoneyText.gameObject.SetActive(false);
         if (noMoneyText != null) noMoneyText.gameObject.SetActive(false);
         if (vendingPanel != null) vendingPanel.SetActive(false);
@@ -78,18 +74,11 @@ public class VendingMachineInteraction : MonoBehaviour
         {
             codeInputField.characterLimit = MAX_CODE_LENGTH;
             codeInputField.contentType = TMP_InputField.ContentType.IntegerNumber;
-            codeInputField.onValueChanged.AddListener(OnInputValueChanged);
         }
-    }
-    
-    private void OnInputValueChanged(string newText)
-    {
-        // Логика при изменении текста
     }
     
     private void InitializeButtons()
     {
-        // Настраиваем цифровые кнопки
         for (int i = 0; i < numberButtons.Length; i++)
         {
             if (numberButtons[i] != null)
@@ -99,17 +88,8 @@ public class VendingMachineInteraction : MonoBehaviour
             }
         }
         
-        // Настраиваем кнопку отмены
-        if (cancelButton != null)
-        {
-            cancelButton.onClick.AddListener(CancelInput);
-        }
-        
-        // Настраиваем кнопку закрытия
-        if (closeButton != null)
-        {
-            closeButton.onClick.AddListener(CloseVendingPanel);
-        }
+        if (cancelButton != null) cancelButton.onClick.AddListener(CancelInput);
+        if (closeButton != null) closeButton.onClick.AddListener(CloseVendingPanel);
     }
     
     private void AppendNumberToInput(int number)
@@ -117,7 +97,6 @@ public class VendingMachineInteraction : MonoBehaviour
         if (codeInputField != null && codeInputField.text.Length < MAX_CODE_LENGTH)
         {
             codeInputField.text += number.ToString();
-            codeInputField.Select();
             codeInputField.ActivateInputField();
         }
     }
@@ -127,7 +106,6 @@ public class VendingMachineInteraction : MonoBehaviour
         if (codeInputField != null)
         {
             codeInputField.text = "";
-            codeInputField.Select();
             codeInputField.ActivateInputField();
         }
     }
@@ -136,7 +114,7 @@ public class VendingMachineInteraction : MonoBehaviour
     {
         CheckVendingMachineRaycast();
         
-        if (vendingPanel.activeSelf)
+        if (vendingPanel != null && vendingPanel.activeSelf)
         {
             HandleKeyboardInput();
             HandleEscapeInput();
@@ -149,42 +127,26 @@ public class VendingMachineInteraction : MonoBehaviour
         
         for (KeyCode key = KeyCode.Alpha0; key <= KeyCode.Alpha9; key++)
         {
-            if (Input.GetKeyDown(key))
-            {
-                int number = (int)key - (int)KeyCode.Alpha0;
-                AppendNumberToInput(number);
-            }
+            if (Input.GetKeyDown(key)) AppendNumberToInput((int)key - (int)KeyCode.Alpha0);
         }
-        
         for (KeyCode key = KeyCode.Keypad0; key <= KeyCode.Keypad9; key++)
         {
-            if (Input.GetKeyDown(key))
-            {
-                int number = (int)key - (int)KeyCode.Keypad0;
-                AppendNumberToInput(number);
-            }
+            if (Input.GetKeyDown(key)) AppendNumberToInput((int)key - (int)KeyCode.Keypad0);
         }
     }
     
     private void HandleEscapeInput()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            CloseVendingPanel();
-        }
+        if (Input.GetKeyDown(KeyCode.Escape)) CloseVendingPanel();
     }
     
     private void CheckVendingMachineRaycast()
     {
-        if (playerCamera == null) return;
-        if (vendingPanel.activeSelf){
-            return;
-        }
+        Camera cam = PlayerCamera;
+        if (cam == null || (vendingPanel != null && vendingPanel.activeSelf)) return;
 
-        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-        RaycastHit hit;
-        
-        if (Physics.Raycast(ray, out hit, interactionRange, interactionLayer))
+        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
+        if (Physics.Raycast(ray, out RaycastHit hit, interactionRange, interactionLayer))
         {
             if (hit.collider.CompareTag("Vending"))
             {
@@ -200,10 +162,7 @@ public class VendingMachineInteraction : MonoBehaviour
     
     private void UpdateVendingTextDisplay()
     {
-        if (inventoryManager == null) return;
-        
         bool hasMoney = CheckForMoneyItem();
-        
         if (hasMoneyText != null) hasMoneyText.gameObject.SetActive(hasMoney);
         if (noMoneyText != null) noMoneyText.gameObject.SetActive(!hasMoney);
     }
@@ -216,169 +175,66 @@ public class VendingMachineInteraction : MonoBehaviour
     
     private bool CheckForMoneyItem()
     {
-        if (inventoryManager == null) return false;
+        InventoryManager inv = CurrentInventory;
+        if (inv == null) return false;
         
-        // Проверяем основные слоты инвентаря
-        foreach (InventorySlot slot in inventoryManager.slots)
-        {
-            if (slot.item != null && slot.item.itemType == ItemType.Money)
-            {
-                return true;
-            }
-        }
+        foreach (InventorySlot slot in inv.slots)
+            if (slot.item != null && slot.item.itemType == ItemType.Money) return true;
         
-        // Проверяем слоты горячей панели
-        foreach (InventorySlot slot in inventoryManager.hotbarSlots)
-        {
-            if (slot.item != null && slot.item.itemType == ItemType.Money)
-            {
-                return true;
-            }
-        }
+        foreach (InventorySlot slot in inv.hotbarSlots)
+            if (slot.item != null && slot.item.itemType == ItemType.Money) return true;
         
         return false;
     }
     
     private bool RemoveMoneyItem()
     {
-        if (inventoryManager == null) return false;
+        InventoryManager inv = CurrentInventory;
+        if (inv == null) return false;
         
-        // Ищем и удаляем один предмет типа Money из горячей панели
-        foreach (InventorySlot slot in inventoryManager.hotbarSlots)
+        // Сначала ищем в инвентаре, потом в хотбаре
+        List<InventorySlot> allSlots = new List<InventorySlot>(inv.slots);
+        allSlots.AddRange(inv.hotbarSlots);
+
+        foreach (InventorySlot slot in allSlots)
         {
             if (slot.item != null && slot.item.itemType == ItemType.Money && slot.amount > 0)
             {
                 slot.amount--;
-                if (slot.itemAmountText != null)
-                {
-                    slot.itemAmountText.text = slot.amount > 1 ? slot.amount.ToString() : "";
-                }
+                if (slot.amount <= 0) slot.ClearSlot(); // Используем метод ClearSlot, который мы добавили ранее
+                else if (slot.itemAmountText != null) slot.itemAmountText.text = slot.amount > 1 ? slot.amount.ToString() : "";
                 
-                // Если предметов больше нет, очищаем слот
-                if (slot.amount <= 0)
-                {
-                    slot.item = null;
-                    slot.amount = 0;
-                    slot.isEmpty = true;
-                    
-                    // Очищаем иконку
-                    if (slot.itemIcon != null)
-                    {
-                        Image iconImage = slot.itemIcon.GetComponent<Image>();
-                        if (iconImage != null)
-                        {
-                            iconImage.color = new Color(1, 1, 1, 0);
-                            iconImage.sprite = null;
-                        }
-                    }
-                    
-                    if (slot.itemAmountText != null)
-                        slot.itemAmountText.text = "";
-                }
-                
-                Debug.Log("Деньги списаны!");
                 return true;
             }
         }
-        
-        // Если не нашли в горячей панели, ищем в основном инвентаре
-        foreach (InventorySlot slot in inventoryManager.slots)
-        {
-            if (slot.item != null && slot.item.itemType == ItemType.Money && slot.amount > 0)
-            {
-                slot.amount--;
-                if (slot.itemAmountText != null)
-                {
-                    slot.itemAmountText.text = slot.amount > 1 ? slot.amount.ToString() : "";
-                }
-                
-                // Если предметов больше нет, очищаем слот
-                if (slot.amount <= 0)
-                {
-                    slot.item = null;
-                    slot.amount = 0;
-                    slot.isEmpty = true;
-                    
-                    // Очищаем иконку
-                    if (slot.itemIcon != null)
-                    {
-                        Image iconImage = slot.itemIcon.GetComponent<Image>();
-                        if (iconImage != null)
-                        {
-                            iconImage.color = new Color(1, 1, 1, 0);
-                            iconImage.sprite = null;
-                        }
-                    }
-                    
-                    if (slot.itemAmountText != null)
-                        slot.itemAmountText.text = "";
-                }
-                
-                Debug.Log("Деньги списаны!");
-                return true;
-            }
-        }
-        
-        Debug.Log("Не удалось списать деньги!");
         return false;
     }
     
     private bool AddVendingItemToInventory()
     {
-        if (inventoryManager == null || vendingItem == null) return false;
+        InventoryManager inv = CurrentInventory;
+        if (inv == null || vendingItem == null) return false;
         
-        // Пытаемся добавить предмет в инвентарь
-        bool added = AddItemToFirstAvailableSlot(inventoryManager.hotbarSlots, vendingItem, 1);
-        
-        if (!added)
-        {
-            added = AddItemToFirstAvailableSlot(inventoryManager.slots, vendingItem, 1);
-        }
-        
-        if (added)
-        {
-            Debug.Log($"Предмет {vendingItem.itemName} добавлен в инвентарь!");
-        }
-        else
-        {
-            Debug.Log("Не удалось добавить предмет в инвентарь!");
-        }
-        
-        return added;
+        // Используем метод из InventoryManager, если он публичный, 
+        // или реализуем локально через те же слоты
+        return AddItemToFirstAvailableSlot(inv.hotbarSlots, vendingItem, 1) || 
+               AddItemToFirstAvailableSlot(inv.slots, vendingItem, 1);
     }
     
-    private bool AddItemToFirstAvailableSlot(List<InventorySlot> slots, ItemScriptableObject item, int amount)
+    private bool AddItemToFirstAvailableSlot(List<InventorySlot> targetSlots, ItemScriptableObject item, int amount)
     {
-        foreach (InventorySlot slot in slots)
+        foreach (InventorySlot slot in targetSlots)
         {
             if (slot.isEmpty)
             {
-                // Нашли пустой слот, добавляем предмет
                 slot.item = item;
                 slot.amount = amount;
                 slot.isEmpty = false;
-                
-                // Устанавливаем иконку
-                if (slot.itemIcon != null)
-                {
-                    Image iconImage = slot.itemIcon.GetComponent<Image>();
-                    if (iconImage != null)
-                    {
-                        iconImage.color = new Color(1, 1, 1, 1);
-                        iconImage.sprite = item.icon;
-                    }
-                }
-                
-                // Устанавливаем текст количества
-                if (slot.itemAmountText != null)
-                {
-                    slot.itemAmountText.text = amount > 1 ? amount.ToString() : "";
-                }
-                
+                slot.SetIcon(item.icon);
+                if (slot.itemAmountText != null) slot.itemAmountText.text = amount > 1 ? amount.ToString() : "";
                 return true;
             }
         }
-        
         return false;
     }
     
@@ -393,16 +249,12 @@ public class VendingMachineInteraction : MonoBehaviour
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
                 vendingPanel.SetActive(true);
-                hotbarPanel.SetActive(false);
+                
+                GameObject hb = CurrentHotbar;
+                if (hb != null) hb.SetActive(false);
                 
                 CancelInput();
                 HideAllText();
-                
-                if (codeInputField != null)
-                {
-                    codeInputField.Select();
-                    codeInputField.ActivateInputField();
-                }
             }
         }
     }
@@ -412,7 +264,10 @@ public class VendingMachineInteraction : MonoBehaviour
         if (vendingPanel != null)
         {
             vendingPanel.SetActive(false);
-            hotbarPanel.SetActive(true);
+            
+            GameObject hb = CurrentHotbar;
+            if (hb != null) hb.SetActive(true);
+            
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             isProcessing = false;
@@ -422,123 +277,57 @@ public class VendingMachineInteraction : MonoBehaviour
     public void OnApplyButtonClicked()
     {
         if (isProcessing) return;
-        
-        if (codeInputField == null || string.IsNullOrEmpty(codeInputField.text))
-        {
-            Debug.Log("Введите код!");
-            return;
-        }
+        if (codeInputField == null || string.IsNullOrEmpty(codeInputField.text)) return;
         
         isProcessing = true;
         
         if (codeInputField.text == correctCode)
         {
-            // Проверяем, есть ли у игрока деньги
             if (!CheckForMoneyItem())
             {
-                StartCoroutine(ShowErrorMessage("Недостаточно денег!"));
-                isProcessing = false;
+                StartCoroutine(ShowErrorMessage("НЕТ ДЕНЕГ"));
                 return;
             }
             
-            // Списываем деньги
-            if (!RemoveMoneyItem())
+            if (RemoveMoneyItem() && AddVendingItemToInventory())
             {
-                StartCoroutine(ShowErrorMessage("Ошибка списания денег!"));
-                isProcessing = false;
-                return;
-            }
-            
-            // Добавляем предмет
-            if (AddVendingItemToInventory())
-            {
-                Debug.Log("Товар успешно выдан!");
-                // Закрываем панель после успешной покупки
                 CloseVendingPanel();
             }
             else
             {
-                StartCoroutine(ShowErrorMessage("Не удалось выдать товар!"));
+                StartCoroutine(ShowErrorMessage("НЕТ МЕСТА"));
             }
         }
         else
         {
-            // Неправильный код
-            StartCoroutine(ShowErrorMessage("Ошибка!"));
+            StartCoroutine(ShowErrorMessage("ОШИБКА"));
         }
     }
     
     private IEnumerator ShowErrorMessage(string message)
     {
         if (codeInputField == null) yield break;
-        
-        // Сохраняем оригинальный текст (хотя он должен быть кодом)
-        string originalText = codeInputField.text;
-        
-        // Показываем сообщение об ошибке
         codeInputField.text = message;
         codeInputField.interactable = false;
-        
-        // Блокируем кнопки на время показа сообщения
         SetButtonsInteractable(false);
         
-        // Ждем 2 секунды
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1.5f);
         
-        // Восстанавливаем поле ввода
         codeInputField.text = "";
         codeInputField.interactable = true;
-        codeInputField.Select();
-        codeInputField.ActivateInputField();
-        
-        // Разблокируем кнопки
         SetButtonsInteractable(true);
-        
         isProcessing = false;
     }
     
     private void SetButtonsInteractable(bool interactable)
     {
-        foreach (Button button in numberButtons)
-        {
-            if (button != null)
-            {
-                button.interactable = interactable;
-            }
-        }
-        
-        if (cancelButton != null)
-        {
-            cancelButton.interactable = interactable;
-        }
+        foreach (Button b in numberButtons) if (b != null) b.interactable = interactable;
+        if (cancelButton != null) cancelButton.interactable = interactable;
     }
     
     private void OnDestroy()
     {
         rightMouseClick.performed -= OnRightMouseClick;
         rightMouseClick.Disable();
-        
-        foreach (Button button in numberButtons)
-        {
-            if (button != null)
-            {
-                button.onClick.RemoveAllListeners();
-            }
-        }
-        
-        if (cancelButton != null)
-        {
-            cancelButton.onClick.RemoveAllListeners();
-        }
-        
-        if (closeButton != null)
-        {
-            closeButton.onClick.RemoveAllListeners();
-        }
-        
-        if (codeInputField != null)
-        {
-            codeInputField.onValueChanged.RemoveAllListeners();
-        }
     }
 }

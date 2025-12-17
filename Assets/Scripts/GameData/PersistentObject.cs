@@ -120,6 +120,14 @@ public class PersistentObject : MonoBehaviour
         // 4. Обновляем предметы (DragAndDrop)
         DragAndDropItem[] items = GetComponentsInChildren<DragAndDropItem>(true);
         foreach (var item in items) item.UpdatePlayerReference();
+
+        FlashLightManager flManager = GetComponentInChildren<FlashLightManager>(true);
+        if (flManager != null && flManager.flashlight == null) 
+        {
+            // Только если фонарик сам не зарегистрировался, ищем его принудительно
+            FlashPass marker = Object.FindAnyObjectByType<FlashPass>(FindObjectsInactive.Include);
+            if (marker != null) flManager.RegisterFlashlight(marker.gameObject);
+        }
         
         Debug.Log("Все канвасы включены, ссылки на игрока и камеру обновлены.");
     }

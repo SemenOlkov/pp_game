@@ -32,20 +32,9 @@ public class InventoryManager : MonoBehaviour
     
     private void Awake()
     {
-        // Реализация синглтона
-        // if (Instance != null && Instance != this)
-        // {
-        //     Destroy(this.gameObject);
-        //     return;
-        // }
-        
-        // Instance = this;
-        // DontDestroyOnLoad(this.gameObject);
-        
-        // Подписываемся на событие загрузки сцены
+        Instance = this; // Простое присваивание, так как он внутри PersistentObject
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
-    
     private void OnDestroy()
     {
         // Отписываемся от события при уничтожении

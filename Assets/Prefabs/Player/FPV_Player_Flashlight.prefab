@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3758109060270716061}
   - component: {fileID: 7634677340123580719}
   - component: {fileID: 4539855154449739092}
+  - component: {fileID: 2463244082833835868}
   m_Layer: 0
   m_Name: Flashlight
   m_TagString: Untagged
@@ -127,6 +128,18 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &2463244082833835868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2406190868904244848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 506927267d805334a85f0fc9029367f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlashPass
 --- !u!1 &6886533174919145533
 GameObject:
   m_ObjectHideFlags: 0
@@ -136,7 +149,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7241973162977180111}
-  - component: {fileID: 760413494271455309}
   - component: {fileID: 2176511747302098544}
   m_Layer: 0
   m_Name: FPV_Player_Flashlight
@@ -163,29 +175,6 @@ Transform:
   - {fileID: 647987842672262789}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &760413494271455309
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6886533174919145533}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9432c3e9ea242d4c846e48acd8f7091, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FlashLightManager
-  flashlight: {fileID: 2406190868904244848}
-  batteryText: {fileID: 0}
-  currentBattery: 100
-  batteryDrainRate: 1
-  lowBatteryThreshold: 20
-  normalBatteryColor: {r: 1, g: 1, b: 1, a: 1}
-  lowBatteryColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  criticalBatteryColor: {r: 1, g: 0, b: 0, a: 1}
-  messageText: {fileID: 0}
-  messageDisplayTime: 2
-  inventoryManager: {fileID: 0}
 --- !u!114 &2176511747302098544
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -288,31 +277,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9005220659476430818, guid: 2d3a85ecde41a8246a79669975912b74, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.699997
+      value: -79.22003
       objectReference: {fileID: 0}
     - target: {fileID: 9005220659476430818, guid: 2d3a85ecde41a8246a79669975912b74, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.24
+      value: 3.0299997
       objectReference: {fileID: 0}
     - target: {fileID: 9005220659476430818, guid: 2d3a85ecde41a8246a79669975912b74, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10.839996
+      value: 53.16669
       objectReference: {fileID: 0}
     - target: {fileID: 9005220659476430818, guid: 2d3a85ecde41a8246a79669975912b74, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: -0.044590063
       objectReference: {fileID: 0}
     - target: {fileID: 9005220659476430818, guid: 2d3a85ecde41a8246a79669975912b74, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9005220659476430818, guid: 2d3a85ecde41a8246a79669975912b74, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0.99900544
       objectReference: {fileID: 0}
     - target: {fileID: 9005220659476430818, guid: 2d3a85ecde41a8246a79669975912b74, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9005220659476430818, guid: 2d3a85ecde41a8246a79669975912b74, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

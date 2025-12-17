@@ -3,68 +3,53 @@ using System.Collections;
 
 public class DarknessTrigger : MonoBehaviour
 {
-    [Header("References")]
-    public PlayerStatus playerStatus;
-    
     [Header("Sanity Damage Settings")]
     [SerializeField] private int sanityDamage = 10;
-    [SerializeField] private float damageInterval = 2f; // Интервал между уроном в секундах
-    
+    [SerializeField] private float damageInterval = 2f;
+
     private bool isPlayerInTrigger = false;
     private Coroutine damageCoroutine;
-    private FlashLightManager flashlightManager;
     private bool wasFlashlightOn = false;
 
-    private void Start()
+    // Свойство для получения актуального статуса игрока
+    private PlayerStatus CurrentPlayerStatus
     {
-    // Получаем ссылку на FlashLightManager
-        flashlightManager = FlashLightManager.Instance;
-    
-        if (flashlightManager == null)
+        get
         {
-            Debug.LogWarning("FlashLightManager not found in scene!");
-        }
-    
-        // Ищем компонент PlayerStatus в сцене
-        playerStatus = FindObjectOfType<PlayerStatus>();
-    
-        if (playerStatus == null)
-        {
-            Debug.LogWarning("PlayerStatus not found in scene! Will try to get it when player enters trigger.");
-        }
-        else
-        {
-            Debug.Log("PlayerStatus found and assigned in Start");
+            if (PersistentObject.Instance != null)
+            {
+                return PersistentObject.Instance.GetComponentInChildren<PlayerStatus>(true);
+            }
+            return null;
         }
     }
+
+    // Свойство для получения актуального менеджера фонарика
+    private FlashLightManager CurrentFlashlight
+    {
+        get
+        {
+            // Используем статический Instance самого менеджера, если он есть
+            return FlashLightManager.Instance;
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            // Проверяем PlayerStatus
-            if (playerStatus == null)
-            {
-                playerStatus = other.GetComponent<PlayerStatus>();
-                if (playerStatus == null)
-                {
-                    Debug.LogWarning("PlayerStatus not found on player!");
-                    return;
-                }
-            }
-
             isPlayerInTrigger = true;
             
-            // Проверяем состояние фонарика при входе
-            if (flashlightManager != null && flashlightManager.IsFlashlightOn())
+            var fl = CurrentFlashlight;
+            if (fl != null && fl.IsFlashlightOn())
             {
                 wasFlashlightOn = true;
-                Debug.Log("Игрок вошел в зону темноты с фонариком");
+                Debug.Log("Игрок вошел в темноту с фонариком");
             }
             else
             {
                 wasFlashlightOn = false;
-                Debug.Log("Игрок вошел в зону темноты без фонарика - начинает терять психику!");
-                // Запускаем корутину нанесения урона
+                Debug.Log("Игрок вошел в темноту без фонарика - урон запущен");
                 StartDamageCoroutine();
             }
         }
@@ -76,34 +61,32 @@ public class DarknessTrigger : MonoBehaviour
         {
             isPlayerInTrigger = false;
             wasFlashlightOn = false;
-            
-            // Останавливаем корутину при выходе из триггера
             StopDamageCoroutine();
-            
             Debug.Log("Игрок вышел из зоны темноты");
         }
     }
 
     private void Update()
     {
-        if (!isPlayerInTrigger || flashlightManager == null) return;
+        if (!isPlayerInTrigger) return;
         
-        bool isFlashlightOnNow = flashlightManager.IsFlashlightOn();
+        var fl = CurrentFlashlight;
+        if (fl == null) return;
+
+        bool isFlashlightOnNow = fl.IsFlashlightOn();
         
-        // Если состояние фонарика изменилось
+        // Если состояние фонарика изменилось (включили/выключили/сел)
         if (isFlashlightOnNow != wasFlashlightOn)
         {
-            // Если фонарик включили - останавливаем урон
-            if (isFlashlightOnNow && damageCoroutine != null)
+            if (isFlashlightOnNow)
             {
                 StopDamageCoroutine();
                 Debug.Log("Фонарик включен - урон остановлен");
             }
-            // Если фонарик выключили (или разрядился) - запускаем урон
-            else if (!isFlashlightOnNow && damageCoroutine == null && isPlayerInTrigger)
+            else
             {
-                Debug.Log("Фонарик выключен - урон возобновлен");
                 StartDamageCoroutine();
+                Debug.Log("Фонарик выключен - урон возобновлен");
             }
             
             wasFlashlightOn = isFlashlightOnNow;
@@ -133,22 +116,19 @@ public class DarknessTrigger : MonoBehaviour
         {
             yield return new WaitForSeconds(damageInterval);
             
-            // Проверяем, что игрок все еще в триггере и фонарик выключен
-            if (isPlayerInTrigger && 
-                flashlightManager != null && 
-                !flashlightManager.IsFlashlightOn() && 
-                playerStatus != null)
+            var fl = CurrentFlashlight;
+            var status = CurrentPlayerStatus;
+
+            // Проверяем актуальные ссылки в каждом тике урона
+            if (isPlayerInTrigger && fl != null && !fl.IsFlashlightOn() && status != null)
             {
-                playerStatus.Sanity -= sanityDamage;
-                Debug.Log($"Психика уменьшена на {sanityDamage}. Текущая психика: {playerStatus.Sanity}");
+                status.Sanity -= sanityDamage;
+                Debug.Log($"Темнота давит! Психика: {status.Sanity}");
             }
         }
-        
-        // Корутина завершилась - обнуляем ссылку
         damageCoroutine = null;
     }
 
-    // Для дебага - отображение триггера в редакторе
     private void OnDrawGizmos()
     {
         if (GetComponent<Collider>() != null)
