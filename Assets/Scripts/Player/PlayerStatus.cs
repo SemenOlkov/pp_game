@@ -11,7 +11,18 @@ public class PlayerStatus : MonoBehaviour
     
     private const int MAX_VALUE = 100;
 
-    
+    public static PlayerStatus Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
     public int Sanity
     {
         get => sanity;

@@ -21,7 +21,8 @@ public class SecondTrigger : MonoBehaviour
         player.transform.position = triggerSystem.firstTriggerPosition;
         yield return null; // Ждем один кадр
         player.transform.position = triggerSystem.firstTriggerPosition;
-        
+        yield return null;
+        player.transform.position = triggerSystem.firstTriggerPosition;
         Debug.Log($"Финальная позиция: {player.transform.position}");
     }
 }

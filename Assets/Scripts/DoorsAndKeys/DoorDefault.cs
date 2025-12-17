@@ -1,40 +1,35 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class DoorDefault : MonoBehaviour
 {
     [Header("Door Settings")]
     public bool canGo = false;
-    public string sceneName = "Dead";
+    public string sceneName = "DebugScene";
+    public bool requiresKey = false;
+    public string requiredKeyCode = "1";
 
     [Header("UI Settings")]
-    [SerializeField] private GameObject goText; // Текст подсказки "Можно перейти"
-    [SerializeField] private GameObject cantGoText; // Текст подсказки "Нельзя перейти"
-    
-    [Header("Raycast Settings")]
-    [SerializeField] private float interactionDistance = 7f; // Дистанция взаимодействия
-    [SerializeField] private LayerMask interactionLayer; // Слой для взаимодействия
+    [SerializeField] private GameObject cantGoText;    // Канвас 1: Нельзя (нет ключа)
+    [SerializeField] private GameObject canGoText;     // Канвас 2: Можно (есть ключ/не нужен)
+    [SerializeField] private GameObject crowbarHintText; // Канвас 3: Взломать (есть монтировка)
 
-    private Camera playerCamera;
+    [Header("Raycast Settings")]
+    [SerializeField] private float interactionDistance = 7f;
+    [SerializeField] private LayerMask interactionLayer;
+
     private bool isHovered = false;
+
+    // Ссылки
+    private Camera PlayerCamera => Camera.main;
+    private HotbarPanel CurrentHotbar => PersistentObject.Instance != null 
+        ? PersistentObject.Instance.GetComponentInChildren<HotbarPanel>(true) 
+        : null;
 
     void Start()
     {
-        // Находим камеру
-        playerCamera = Camera.main;
-        if (playerCamera == null)
-        {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null)
-            {
-                playerCamera = player.GetComponentInChildren<Camera>();
-            }
-        }
-        
         HideAllHints();
-        
-        // Отладка
-        Debug.Log($"{gameObject.name}: Скрипт и коллайдер на одном объекте");
     }
 
     void Update()
@@ -45,110 +40,124 @@ public class DoorDefault : MonoBehaviour
 
     private void HandleRaycast()
     {
-        if (playerCamera == null) return;
+        Camera cam = PlayerCamera;
+        if (cam == null) return;
 
-        // Луч из центра экрана
-        Ray ray = playerCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-        RaycastHit hit;
-
-        // Визуализация луча
-        Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.yellow, 0.1f);
-
-        // Проверяем пересечение луча
-        if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer))
+        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        
+        if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance, interactionLayer))
         {
-            // ПРЯМАЯ ПРОВЕРКА: луч попал в этот же GameObject
             if (hit.collider.gameObject == gameObject)
             {
-                if (!isHovered)
-                {
-                    isHovered = true;
-                    ShowHint();
-                    Debug.Log($"Навели на дверь: {gameObject.name}");
-                }
+                isHovered = true;
+                UpdateHints();
                 return;
             }
         }
         
-        // Если луч перестал попадать
         if (isHovered)
         {
             isHovered = false;
             HideAllHints();
-            Debug.Log($"Ушли от двери: {gameObject.name}");
+        }
+    }
+
+    private void UpdateHints()
+    {
+        HideAllHints();
+
+        bool hasKey = CheckActiveKey();
+        bool hasCrowbar = IsHoldingCrowbar();
+
+        // 1. Приоритет: Если нужен ключ, дверь открыта (canGo), но в руках монтировка
+        if (canGo && requiresKey && !hasKey && hasCrowbar)
+        {
+            if (crowbarHintText != null) crowbarHintText.SetActive(true);
+        }
+        // 2. Если дверь закрыта программно ИЛИ нужен ключ (а в руках нет ни ключа, ни монтировки)
+        else if (!canGo || (requiresKey && !hasKey))
+        {
+            if (cantGoText != null) cantGoText.SetActive(true);
+        }
+        // 3. Можно войти (есть ключ или он не нужен)
+        else
+        {
+            if (canGoText != null) canGoText.SetActive(true);
         }
     }
 
     private void HandleInput()
     {
-        if (Input.GetKeyDown(KeyCode.Return) && isHovered)
+        if (!isHovered) return;
+
+        // Обычный вход (Enter)
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             TryLoadScene();
         }
+
+        // Взлом монтировкой (ЛКМ)
+        if (Input.GetMouseButtonDown(0) && canGo && requiresKey && IsHoldingCrowbar() && !CheckActiveKey())
+        {
+            TryBreakLock();
+        }
     }
 
-    private void ShowHint()
+    private void TryBreakLock()
     {
-        HideAllHints();
-        
-        if (canGo)
+        if (PlayerStatus.Instance != null)
         {
-            if (goText != null)
+            // Проверяем, хватит ли психики на штраф
+            if (PlayerStatus.Instance.Sanity > 10)
             {
-                goText.SetActive(true);
-                Debug.Log("Показали: МОЖНО ИДТИ");
+                PlayerStatus.Instance.Sanity -= 10;
+                Debug.Log("Взлом! Штраф -10 психики. Переход...");
+                SceneManager.LoadScene(sceneName);
+            }
+            else
+            {
+                Debug.Log("Слишком страшно взламывать, психики недостаточно!");
+                // Можно добавить звук испуга или текст "Я не справлюсь"
             }
         }
-        else
+    }
+
+    private bool CheckActiveKey()
+    {
+        HotbarPanel hb = CurrentHotbar;
+        if (hb == null) return false;
+
+        var item = hb.GetSelectedItem();
+        if (item != null && item.itemType == ItemType.Key)
         {
-            if (cantGoText != null)
-            {
-                cantGoText.SetActive(true);
-                Debug.Log("Показали: НЕЛЬЗЯ ИДТИ");
-            }
+            KeyItem key = item as KeyItem;
+            return key != null && key.keyCode == requiredKeyCode;
+        }
+        return false;
+    }
+
+    private bool IsHoldingCrowbar()
+    {
+        HotbarPanel hb = CurrentHotbar;
+        if (hb == null) return false;
+
+        var item = hb.GetSelectedItem();
+        return item != null && item.itemType == ItemType.Crowbar;
+    }
+
+    private void TryLoadScene()
+    {
+        if (canGo && (!requiresKey || CheckActiveKey()))
+        {
+            if (!string.IsNullOrEmpty(sceneName))
+                SceneManager.LoadScene(sceneName);
         }
     }
 
     private void HideAllHints()
     {
-        if (goText != null)
-            goText.SetActive(false);
-        if (cantGoText != null)
-            cantGoText.SetActive(false);
+        if (canGoText != null) canGoText.SetActive(false);
+        if (cantGoText != null) cantGoText.SetActive(false);
+        if (crowbarHintText != null) crowbarHintText.SetActive(false);
     }
-
-    private void TryLoadScene()
-    {
-        if (canGo && !string.IsNullOrEmpty(sceneName))
-        {
-            Debug.Log($"Загружаем сцену: {sceneName}");
-            SceneManager.LoadScene(sceneName);
-        }
-        else if (!canGo)
-        {
-            Debug.Log("Дверь закрыта! canGo = false");
-        }
-        else
-        {
-            Debug.LogError($"sceneName не установлен на двери {gameObject.name}");
-        }
-    }
-
-    // Публичные методы
-    public void UnlockDoor()
-    {
-        canGo = true;
-        if (isHovered) ShowHint();
-    }
-
-    public void LockDoor()
-    {
-        canGo = false;
-        if (isHovered) ShowHint();
-    }
-
-    // Вспомогательные методы
-    public bool IsHovered() => isHovered;
-    public bool CanGo() => canGo;
-    public void SetScene(string name) => sceneName = name;
 }

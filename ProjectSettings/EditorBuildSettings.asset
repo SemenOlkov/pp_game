@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Scrimmer.unity
     guid: 2dce92c8b4161d1489602de8b3d6a49c
   - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 824de7f4390d64f46ae056b3600e1e63
+  - enabled: 1
     path: Assets/Scenes/Dead.unity
     guid: fb3550705a6ad0f4aaeb03c46b6da252
   - enabled: 1
@@ -20,12 +23,30 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SceneWithLockers.unity
     guid: 603b046ad28121f448e836c5a5c39213
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Scene_1_after.unity
     guid: e2f9e04e6720846489b5d30b206e9cc0
   - enabled: 1
     path: Assets/Scenes/DebugScene.unity
     guid: 99db5af03d3cf324da676c283780fc85
+  - enabled: 1
+    path: Assets/Scenes/keys.unity
+    guid: f2b0fc37bb6ef9947aa8d25796bf557f
+  - enabled: 1
+    path: Assets/Scenes/class.unity
+    guid: 7c78f9056a5f0fc40b6cd404a4d15836
+  - enabled: 1
+    path: Assets/Scenes/Scene_1_after_lamp.unity
+    guid: c57aadbfaf594cb4281f61635a785d4c
+  - enabled: 1
+    path: Assets/Scenes/42.unity
+    guid: 3ef7389edb3f2e149a8322a8a55b9b90
+  - enabled: 1
+    path: Assets/Scenes/42_part_two.unity
+    guid: 028fd3301e2771c4993a545e30846081
+  - enabled: 1
+    path: Assets/Scenes/BaseAfterLockers.unity
+    guid: df7c15d3301f12c47858bb19c38d0de9
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 9e7be553448fa2546aea5752021cbcf7, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

@@ -21,4 +21,4 @@ MonoBehaviour:
     \u043A\u0430\u043A\u043E\u0439-\u043D\u0438\u0431\u0443\u0434\u044C \u0437\u0430\u043C\u043E\u043A..."
   icon: {fileID: 21300000, guid: c9f102fb2639e934ea7760dca98556d2, type: 3}
   isConsumable: 0
-  KeyCode: 222
+  keyCode: 2

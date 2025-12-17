@@ -14,27 +14,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8984d6c9d440c3746aa7b64ddc63e1ca, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.1559646
+      value: 0.20099157
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8984d6c9d440c3746aa7b64ddc63e1ca, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.1559646
+      value: 0.20099157
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8984d6c9d440c3746aa7b64ddc63e1ca, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.1559646
+      value: 0.20099157
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8984d6c9d440c3746aa7b64ddc63e1ca, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -14.895
+      value: -13.675
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8984d6c9d440c3746aa7b64ddc63e1ca, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.137
+      value: 0.95413
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8984d6c9d440c3746aa7b64ddc63e1ca, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -16.053381
+      value: -67.382
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8984d6c9d440c3746aa7b64ddc63e1ca, type: 3}
       propertyPath: m_LocalRotation.w
@@ -229,7 +229,13 @@ PrefabInstance:
       value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 2051143368708141092, guid: 8984d6c9d440c3746aa7b64ddc63e1ca, type: 3}
+    - {fileID: -4253225735085039100, guid: 8984d6c9d440c3746aa7b64ddc63e1ca, type: 3}
+    - {fileID: -2525042011459122441, guid: 8984d6c9d440c3746aa7b64ddc63e1ca, type: 3}
+    - {fileID: -7890861571838243594, guid: 8984d6c9d440c3746aa7b64ddc63e1ca, type: 3}
+    - {fileID: -8768669346659955915, guid: 8984d6c9d440c3746aa7b64ddc63e1ca, type: 3}
+    - {fileID: -6830314582089797461, guid: 8984d6c9d440c3746aa7b64ddc63e1ca, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8984d6c9d440c3746aa7b64ddc63e1ca, type: 3}
