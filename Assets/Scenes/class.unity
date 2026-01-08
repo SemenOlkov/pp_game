@@ -3631,9 +3631,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   interactionDistance: 7
-  hasCrowbarHint: {fileID: 257922634}
+  hasCrowbarHint: {fileID: 661093240}
   noCrowbarHint: {fileID: 2120874743}
-  moveChildHint: {fileID: 661093240}
+  moveChildHint: {fileID: 257922634}
   objectToDestroy: {fileID: 1967048785}
   overlayPanel: {fileID: 140225299}
   panelAlpha: 0.985
@@ -3818,7 +3818,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 23f2bcebcd33dc64d988f1166c573ae2, type: 2}
     - target: {fileID: -1629161579102029200, guid: ca2b4d048371649478171c109e09ad0b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.00002
+      value: -0.00148
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ca2b4d048371649478171c109e09ad0b, type: 3}
       propertyPath: m_Name

@@ -77,7 +77,6 @@ public class SceneHistory : MonoBehaviour
         data.inventory = new List<SavedItem>(inventorySnapshot);
         
         // Спрайты нельзя сохранить напрямую, сохраняем их имена 
-        // (убедитесь, что они лежат в папке Resources)
         data.journalPageNames = savedJournalPages.Select(s => s.name).ToList();
 
         string json = JsonUtility.ToJson(data, true);

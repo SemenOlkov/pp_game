@@ -470,10 +470,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9254da2f9390f3b4983a54d452a431ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorDefault
-  canGo: 0
-  sceneName: DebugScene
-  requiresKey: 0
-  requiredKeyCode: 1
+  canGo: 1
+  sceneName: basement
+  requiresKey: 1
+  requiredKeyCode: 989889
   cantGoText: {fileID: 1355826583}
   canGoText: {fileID: 1515482604}
   crowbarHintText: {fileID: 4035915550714930765}
@@ -663,7 +663,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorDefault
   canGo: 0
   sceneName: DebugScene
-  requiresKey: 0
+  requiresKey: 1
   requiredKeyCode: 1
   cantGoText: {fileID: 1355826583}
   canGoText: {fileID: 1515482604}
@@ -859,10 +859,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9254da2f9390f3b4983a54d452a431ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorDefault
-  canGo: 0
-  sceneName: Dead
-  requiresKey: 0
-  requiredKeyCode: 1
+  canGo: 1
+  sceneName: basement
+  requiresKey: 1
+  requiredKeyCode: 11111111111111111111111111111111
   cantGoText: {fileID: 1355826583}
   canGoText: {fileID: 1515482604}
   crowbarHintText: {fileID: 4035915550714930765}
@@ -1816,10 +1816,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9254da2f9390f3b4983a54d452a431ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorDefault
-  canGo: 0
-  sceneName: Dead
-  requiresKey: 0
-  requiredKeyCode: 1
+  canGo: 1
+  sceneName: basement
+  requiresKey: 1
+  requiredKeyCode: 11111111111111111
   cantGoText: {fileID: 1355826583}
   canGoText: {fileID: 1515482604}
   crowbarHintText: {fileID: 4035915550714930765}
@@ -2724,10 +2724,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9254da2f9390f3b4983a54d452a431ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorDefault
-  canGo: 0
-  sceneName: Dead
-  requiresKey: 0
-  requiredKeyCode: 1
+  canGo: 1
+  sceneName: basement
+  requiresKey: 1
+  requiredKeyCode: 111111111111
   cantGoText: {fileID: 1355826583}
   canGoText: {fileID: 1515482604}
   crowbarHintText: {fileID: 4035915550714930765}
