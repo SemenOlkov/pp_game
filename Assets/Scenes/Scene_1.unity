@@ -5639,6 +5639,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8068073526183931155, guid: 47c971e7ff847f04190a477a745cdb43, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: -4897732323685117858, guid: 47c971e7ff847f04190a477a745cdb43, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -5740,8 +5744,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9254da2f9390f3b4983a54d452a431ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorDefault
-  canGo: 0
-  sceneName: DebugScene
+  canGo: 1
+  sceneName: SceneWithLockers
   requiresKey: 0
   requiredKeyCode: 1
   cantGoText: {fileID: 1355826583}

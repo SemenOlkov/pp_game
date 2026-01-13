@@ -4280,7 +4280,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorDefault
   canGo: 1
   sceneName: class
-  requiresKey: 1
+  requiresKey: 0
   requiredKeyCode: 1
   cantGoText: {fileID: 1355826583}
   canGoText: {fileID: 1515482604}
