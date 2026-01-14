@@ -3222,6 +3222,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1257614238837953925, guid: 4d84b51d7e9dda34f90e746835a922b1, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 755e818f63c325347800f7a3165db182, type: 3}
     - target: {fileID: 7931902147213257188, guid: 4d84b51d7e9dda34f90e746835a922b1, type: 3}
       propertyPath: m_Name
       value: DoorsCanvas

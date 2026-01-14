@@ -35,7 +35,7 @@ MonoBehaviour:
     - line: '|   useOnDemandResources: 0'
     - line: '|   accelerometerFrequency: 60'
     - line: '|   companyName: DigitalDreamTeam'
-    - line: '|   productName: SomethingWrongHereDemo'
+    - line: '|   productName: The (ir)rational method Demo'
     - line: '|   defaultCursor: {instanceID: 0}'
     - line: '|   cursorHotspot: {x: 0, y: 0}'
     - line: '|   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b:
@@ -166,7 +166,7 @@ MonoBehaviour:
     - line: '|   loadStoreDebugModeEnabled: 0'
     - line: '|   visionOSBundleVersion: 1.0'
     - line: '|   tvOSBundleVersion: 1.0'
-    - line: '|   bundleVersion: 0.0.1 - second iteration release'
+    - line: '|   bundleVersion: 0.0.3 - thrid iteration release'
     - line: '|   preloadedAssets: []'
     - line: '|   metroInputSource: 0'
     - line: '|   wsaTransparentSwapchain: 0'
@@ -1003,11 +1003,11 @@ MonoBehaviour:
   m_Script: {fileID: 15012, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: BuildAutomationSettings
   m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.Build.Profile.BuildAutomationSettings
-  m_OperatingSystemValue: sequoia
-  m_OperatingSystemFamily: mac
+  m_OperatingSystemValue: windows11
+  m_OperatingSystemFamily: windows
   m_XcodeVersion: default
   m_AndroidSdkVersion: android_sdk_35
-  m_UnityArchitecture: AppleSilicon
-  m_MachineTypeId: orka_standard_v1
+  m_UnityArchitecture: 
+  m_MachineTypeId: win_standard_v1
   m_CredentialsId: 
   m_BuildTarget: 19

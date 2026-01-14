@@ -1,13 +1,18 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using UnityEngine.SceneManagement; // Важно: добавляем это для работы со сценами
+using UnityEngine.SceneManagement;
 
 public class SanityEffects : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Image darkeningPanel;
     [SerializeField] private GameObject SingletonUI;
+
+    [Header("Audio Settings")]
+    [SerializeField] private AudioSource sanityAudioSource; // Компонент Audio Source
+    [SerializeField] private float maxSanityVolume = 0.8f;   // Максимальная громкость при 0 психики
+    [SerializeField] private float audioFadeSpeed = 1.5f;    // Скорость нарастания/затухания звука
 
     [Header("Darkness Settings")]
     [SerializeField] private float maxDarkness = 1f;
@@ -27,17 +32,25 @@ public class SanityEffects : MonoBehaviour
     private int lastSanity;
     private Coroutine pulseCoroutine;
 
-
     void Start()
     {
-        // Вызываем поиск ссылок также и при первом старте
-        RefreshPlayerStatus(); // Используем новый метод
+        // Инициализация поиска игрока
+        RefreshPlayerStatus();
     
-        // Настраиваем панель
+        // Настройка визуальной панели
         if (darkeningPanel != null)
         {
             darkeningPanel.gameObject.SetActive(true);
             SetDarknessAlpha(0f);
+        }
+
+        // Настройка аудио
+        if (sanityAudioSource != null)
+        {
+            sanityAudioSource.loop = true;
+            sanityAudioSource.volume = 0f;
+            sanityAudioSource.playOnAwake = false;
+            sanityAudioSource.Stop();
         }
 
         if (playerStatus != null)
@@ -46,7 +59,7 @@ public class SanityEffects : MonoBehaviour
             UpdateDarknessBasedOnSanity(lastSanity);
         }
 
-        if (showDebugLogs) Debug.Log("SanityEffects initialized");
+        if (showDebugLogs) Debug.Log("SanityEffects: Система полностью инициализирована.");
     }
 
     public void RefreshPlayerStatus()
@@ -58,21 +71,13 @@ public class SanityEffects : MonoBehaviour
         }
     }   
 
-    private void ExecuteDeath()
-    {
-        if (PersistentObject.Instance != null)
-            Destroy(PersistentObject.Instance.gameObject);
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;    
-        SceneManager.LoadScene("Dead");
-    }
-
     void Update()
     {
         if (playerStatus == null) return;
 
         int currentSanity = playerStatus.Sanity;
 
+        // Если уровень психики изменился
         if (currentSanity != lastSanity)
         {
             UpdateDarknessBasedOnSanity(currentSanity);
@@ -80,7 +85,36 @@ public class SanityEffects : MonoBehaviour
             lastSanity = currentSanity;
         }
 
+        // Плавное обновление визуала и звука каждый кадр
         UpdateVisuals();
+        UpdateAudio(currentSanity);
+    }
+
+    private void UpdateAudio(int sanity)
+    {
+        if (sanityAudioSource == null) return;
+
+        if (sanity <= 50)
+        {
+            // Начинаем играть, если еще не начали
+            if (!sanityAudioSource.isPlaying) sanityAudioSource.Play();
+
+            // Рассчитываем целевую громкость (чем ближе к 0, тем громче)
+            float sanityFactor = Mathf.InverseLerp(0, 50, sanity);
+            float targetVolume = (1f - sanityFactor) * maxSanityVolume;
+
+            // Плавно меняем громкость
+            sanityAudioSource.volume = Mathf.MoveTowards(sanityAudioSource.volume, targetVolume, Time.deltaTime * audioFadeSpeed);
+        }
+        else
+        {
+            // Если психика > 50, плавно уводим громкость в 0
+            if (sanityAudioSource.isPlaying)
+            {
+                sanityAudioSource.volume = Mathf.MoveTowards(sanityAudioSource.volume, 0f, Time.deltaTime * audioFadeSpeed);
+                if (sanityAudioSource.volume <= 0.01f) sanityAudioSource.Stop();
+            }
+        }
     }
 
     private void UpdateDarknessBasedOnSanity(int sanity)
@@ -96,7 +130,6 @@ public class SanityEffects : MonoBehaviour
 
         baseTargetDarkness = Mathf.Clamp(spentSanity * multiplier, minDarkness, maxDarkness);
 
-        // Активируем скример 
         if (sanity <= 0)
         {
             ExecuteDeath();
@@ -127,6 +160,7 @@ public class SanityEffects : MonoBehaviour
 
             yield return new WaitForSeconds(intervalWait);
 
+            // Фаза затухания (экран чернеет)
             while (currentEffectDarkness < 1f)
             {
                 currentEffectDarkness += Time.deltaTime * pulseFadeSpeed;
@@ -137,6 +171,7 @@ public class SanityEffects : MonoBehaviour
             float blackoutDuration = GetBlackoutDuration(currentSanity);
             yield return new WaitForSeconds(blackoutDuration);
 
+            // Фаза прояснения
             while (currentEffectDarkness > 0f)
             {
                 currentEffectDarkness -= Time.deltaTime * pulseFadeSpeed;
@@ -149,21 +184,9 @@ public class SanityEffects : MonoBehaviour
     private float GetBlackoutDuration(int sanity)
     {
         if (sanity <= 20) return 5.5f;
-        
-        if (sanity < 30)
-        {
-            float t = Mathf.InverseLerp(20, 30, sanity);
-            return Mathf.Lerp(5.5f, 4.0f, t);
-        }
-        
-        if (sanity < 40)
-        {
-            float t = Mathf.InverseLerp(30, 40, sanity);
-            return Mathf.Lerp(4.0f, 3.0f, t);
-        }
-        
-        float t2 = Mathf.InverseLerp(40, 50, sanity);
-        return Mathf.Lerp(3.0f, 2.5f, t2);
+        if (sanity < 30) return Mathf.Lerp(5.5f, 4.0f, Mathf.InverseLerp(20, 30, sanity));
+        if (sanity < 40) return Mathf.Lerp(4.0f, 3.0f, Mathf.InverseLerp(30, 40, sanity));
+        return Mathf.Lerp(3.0f, 2.5f, Mathf.InverseLerp(40, 50, sanity));
     }
 
     private void UpdateVisuals()
@@ -184,6 +207,16 @@ public class SanityEffects : MonoBehaviour
         darkeningPanel.color = color;
     }
 
+    private void ExecuteDeath()
+    {
+        if (PersistentObject.Instance != null)
+            Destroy(PersistentObject.Instance.gameObject);
+        
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;    
+        SceneManager.LoadScene("Dead");
+    }
+
     public void ResetEffects()
     {
         if (pulseCoroutine != null)
@@ -196,6 +229,7 @@ public class SanityEffects : MonoBehaviour
         currentEffectDarkness = 0f;
         
         if (darkeningPanel != null) SetDarknessAlpha(0f);
+        if (sanityAudioSource != null) { sanityAudioSource.Stop(); sanityAudioSource.volume = 0; }
         if (playerStatus != null) lastSanity = playerStatus.Sanity;
     }
 }
